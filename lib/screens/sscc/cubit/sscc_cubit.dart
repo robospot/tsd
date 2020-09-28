@@ -30,6 +30,8 @@ class SsccCubit extends Cubit<SsccState> {
       if (currentState.eanVisibility == false) {
         currentState.eanVisibility = true;
         currentState.ssccValue = scanCode;
+        String ssccCount = await DataRepository().getSsccCount(scanCode);
+        print(ssccCount);
       } else if (currentState.dmVisibility == false) {
         //Показываем DM, значение в EAN
         currentState.dmVisibility = true;
