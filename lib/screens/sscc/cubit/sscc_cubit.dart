@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:meta/meta.dart';
 import 'package:tsd/models/sscc.dart';
 import 'package:tsd/utils/repository.dart';
 
 part 'sscc_state.dart';
+
+enum CodeType { sscc, ean, dm }
 
 class SsccCubit extends Cubit<SsccState> {
   SsccCubit() : super(SsccInitial());
@@ -24,28 +27,65 @@ class SsccCubit extends Cubit<SsccState> {
   }
 
   Future<void> scanSscc(String scanCode) async {
+    // String ssccCount;
+    String eanCount;
     if (state is SsccLoaded) {
       var currentState = state as SsccLoaded;
-      //Показываем EAN, значение в SSCC
-      if (currentState.eanVisibility == false) {
-        currentState.eanVisibility = true;
-        currentState.ssccValue = scanCode;
-        String ssccCount = await DataRepository().getSsccCount(scanCode);
-        print(ssccCount);
-      } else if (currentState.dmVisibility == false) {
-        //Показываем DM, значение в EAN
-        currentState.dmVisibility = true;
-        currentState.eanValue = scanCode;
+//Определяем тип отсканированного кода
+      CodeType codeType;
+      //EAN
+      if (scanCode.length ==
+          int.parse(Settings.getValue<String>('ean_length', '13'))) {
+        codeType = CodeType.ean;
+        //Если <=15, то SSCC
+      } else if (scanCode.length <= 15) {
+        codeType = CodeType.sscc;
       } else
-      // Значение в DM
-      {
-        currentState.dmValue = scanCode;
-        await DataRepository().addSscc(Sscc(
-            sscc: currentState.ssccValue,
-            ean: currentState.eanValue,
-            datamatrix: currentState.dmValue,
-            isUsed: true));
+        codeType = CodeType.dm;
+
+      if (codeType == CodeType.sscc) {
+        //Показываем EAN, значение в SSCC
+        // if (currentState.eanVisibility == false) {
+        currentState.eanVisibility = true;
+        currentState.eanValue = '';
+        currentState.dmValue = '';
+        currentState.dmVisibility = false;
+        currentState.ssccValue = scanCode;
+        currentState.ssccCount = await DataRepository().getSsccCount(scanCode);
       }
+      if (codeType == CodeType.ean) {
+        //Показываем DM, значение в EAN
+
+        currentState.eanVisibility = true;
+        currentState.dmVisibility = true;
+        currentState.dmValue = '';
+        currentState.eanValue = scanCode;
+      }
+
+      if (codeType == CodeType.dm) {
+        //Значение в DM
+
+        currentState.dmValue = scanCode;
+        //Проверяем что все поля заполнены
+        if (currentState.ssccValue != '' &&
+            currentState.eanValue != '' &&
+            currentState.dmValue != '') {
+          try {
+            currentState.ssccCount = await DataRepository().addSscc(Sscc(
+                sscc: currentState.ssccValue,
+                ean: currentState.eanValue,
+                datamatrix: currentState.dmValue,
+                isUsed: true));
+          } catch (e) {
+             
+            
+            print('error!');
+            print(e);
+            emit(SsccError(message: e.toString()));
+          }
+        }
+      }
+
       print('ScanCode: $scanCode');
       emit(SsccLoading());
       emit(SsccLoaded(
@@ -53,7 +93,8 @@ class SsccCubit extends Cubit<SsccState> {
           dmVisibility: currentState.dmVisibility,
           eanValue: currentState.eanValue,
           eanVisibility: currentState.eanVisibility,
-          ssccValue: currentState.ssccValue));
+          ssccValue: currentState.ssccValue,
+          ssccCount: currentState.ssccCount));
     }
   }
 }

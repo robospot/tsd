@@ -47,7 +47,19 @@ class _SsccWidgetState extends State<SsccWidget>
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height - 80;
-    return BlocBuilder<SsccCubit, SsccState>(builder: (context, state) {
+    return BlocConsumer<SsccCubit, SsccState>(listener: (context, state) {
+      if (state is SsccError) {
+        final snackBar = SnackBar(
+          content: Text('${state.message}'),
+          backgroundColor: Colors.red,
+
+        );
+
+        // Find the Scaffold in the widget tree and use
+        // it to show a SnackBar.
+        Scaffold.of(context).showSnackBar(snackBar);
+      }
+    }, builder: (context, state) {
       if (state is SsccLoading) {
         return Center(
           child: CircularProgressIndicator(),
@@ -78,7 +90,8 @@ class _SsccWidgetState extends State<SsccWidget>
                         SizedBox(
                           height: 16,
                         ),
-                        TextFormField(enabled: false,
+                        TextFormField(
+                          enabled: false,
                           controller: sscccontroller,
                           decoration: InputDecoration(
                             labelText: 'скан. SSCC',
@@ -96,7 +109,8 @@ class _SsccWidgetState extends State<SsccWidget>
                         ),
                         Visibility(
                           visible: state.eanVisibility,
-                          child: TextFormField(enabled: false,
+                          child: TextFormField(
+                            enabled: false,
                             controller: eancontroller,
                             decoration: InputDecoration(
                               labelText: 'скан. EAN',
@@ -114,7 +128,8 @@ class _SsccWidgetState extends State<SsccWidget>
                         ),
                         Visibility(
                           visible: state.dmVisibility,
-                          child: TextFormField(enabled: false,
+                          child: TextFormField(
+                            enabled: false,
                             controller: dmcontroller,
                             decoration: InputDecoration(
                               labelText: 'скан. КМ',
@@ -127,6 +142,16 @@ class _SsccWidgetState extends State<SsccWidget>
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Количество КМ в SSCC"),
+                            Text('${state.ssccCount}',style: Theme.of(context).textTheme.headline4,)
+                          ],
+                        )
                       ],
                     ),
                     // Spacer(),

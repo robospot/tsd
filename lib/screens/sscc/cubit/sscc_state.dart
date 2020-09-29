@@ -8,15 +8,27 @@ class SsccInitial extends SsccState {}
 class SsccLoading extends SsccState {}
 
 class SsccLoaded extends SsccState {
-   String ssccValue;
-   String eanValue;
-   String dmValue;
-   bool eanVisibility;
-   bool dmVisibility;
+  String ssccValue;
+  String eanValue;
+  String dmValue;
+  bool eanVisibility;
+  bool dmVisibility;
+  String ssccCount;
+  String eanCount;
   SsccLoaded(
       {this.ssccValue,
       this.eanValue,
       this.dmValue,
       this.eanVisibility,
-      this.dmVisibility});
+      this.dmVisibility,
+      this.ssccCount,
+      this.eanCount});
+}
+
+class SsccError extends SsccState {
+ final String message;
+
+  SsccError({
+    this.message,
+  });
 }

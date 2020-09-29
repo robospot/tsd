@@ -14,6 +14,7 @@ dependencies:
   pda_scanner: ^0.2.9
   flutter_bloc: ^6.0.5
   http: ^0.12.2
+  flutter_settings_screens: ^0.2.1
 
 dev_dependencies:
   flutter_test:

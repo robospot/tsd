@@ -5,41 +5,32 @@ import 'constants.dart';
 
 abstract class Repository {
   /// Throws [NetworkException].
-  Future<void> addSscc(Sscc sscc);
+  // Future<void> addSscc(Sscc sscc);
 }
 
-class DataRepository implements Repository {
-  @override
-  Future<void> addSscc(Sscc sscc) async {
+class DataRepository {
+  Future<String> addSscc(Sscc sscc) async {
     print('${sscc.toJson()}');
     var headers = {"Content-Type": "application/json"};
-    final http.Response response = await http.put(
-        '${ConfigStorage.baseUrl}dm',
-        body: sscc.toJson(),
-        headers: headers);
+    final http.Response response = await http.put('${ConfigStorage.baseUrl}dm',
+        body: sscc.toJson(), headers: headers);
     if (response.statusCode == 200) {
       // Sscc data = Company.fromJson(json.decode(response.body));
-
+      return response.body;
       // return data;
     } else {
-      print('Network connection error');
-      NetworkException();
-      return null;
+      // print(response.body);
+      // response.print('Network connection error');
+       throw Exception(response.body);
     }
   }
 
   Future<String> getSsccCount(String ssccCode) async {
-    print('request');
-    print(ssccCode);
-    
-        var headers = {"Content-Type": "application/json"};
+    var headers = {"Content-Type": "application/json"};
     final http.Response response = await http
-        .get('${ConfigStorage.baseUrl}sscc/$ssccCode',  headers: headers);
+        .get('${ConfigStorage.baseUrl}sscc/$ssccCode', headers: headers);
     if (response.statusCode == 200) {
-      // Sscc data = Company.fromJson(json.decode(response.body));
-      print(response.body);
       return response.body;
-      // return data;
     } else {
       print('Network connection error');
       NetworkException();

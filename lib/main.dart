@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'screens/login/login_screen.dart';
 import 'screens/sscc/sscc_screen.dart';
 
 void main() {
+  //Инициализация настроек
+  Settings.init();
   runApp(MultiBlocProvider(providers: [
     BlocProvider<SsccCubit>(create: (BuildContext context) => SsccCubit()),
   ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    
+    return MaterialApp(debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           appBarTheme: AppBarTheme(

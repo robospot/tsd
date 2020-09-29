@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tsd/screens/appsettings/appsettings.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,7 +13,10 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text('Вход'),
         actions: [
-          IconButton(icon: Icon(Icons.settings), onPressed: clickOnSettings())
+          IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () => clickOnSettings(context)
+              )
         ],
       ),
       body: LoginWidget(),
@@ -20,7 +24,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-clickOnSettings() {}
+clickOnSettings(BuildContext context) {
+  Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => AppSettings(),
+  ));
+}
 
 class LoginWidget extends StatefulWidget {
   LoginWidget({Key key}) : super(key: key);
