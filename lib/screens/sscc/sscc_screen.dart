@@ -151,6 +151,16 @@ class _SsccWidgetState extends State<SsccWidget>
                             Text("Количество КМ в SSCC"),
                             Text('${state.ssccCount}',style: Theme.of(context).textTheme.headline4,)
                           ],
+                        ),
+                         SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Количество КМ в EAN"),
+                            Text('${state.eanCount}',style: Theme.of(context).textTheme.headline4,)
+                          ],
                         )
                       ],
                     ),

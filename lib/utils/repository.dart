@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:tsd/models/sscc.dart';
+import 'package:tsd/models/ssccModel.dart';
 
 import 'constants.dart';
 
@@ -9,19 +10,20 @@ abstract class Repository {
 }
 
 class DataRepository {
-  Future<String> addSscc(Sscc sscc) async {
+  Future<SsccModel> addSscc(Sscc sscc) async {
     print('${sscc.toJson()}');
     var headers = {"Content-Type": "application/json"};
     final http.Response response = await http.put('${ConfigStorage.baseUrl}dm',
         body: sscc.toJson(), headers: headers);
     if (response.statusCode == 200) {
-      // Sscc data = Company.fromJson(json.decode(response.body));
-      return response.body;
+      
+      print(response.body);
+      return SsccModel.fromJson(response.body);
       // return data;
     } else {
       // print(response.body);
       // response.print('Network connection error');
-       throw Exception(response.body);
+      throw Exception(response.body);
     }
   }
 

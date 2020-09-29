@@ -13,8 +13,8 @@ class SsccLoaded extends SsccState {
   String dmValue;
   bool eanVisibility;
   bool dmVisibility;
-  String ssccCount;
-  String eanCount;
+  int ssccCount;
+  int eanCount;
   SsccLoaded(
       {this.ssccValue,
       this.eanValue,

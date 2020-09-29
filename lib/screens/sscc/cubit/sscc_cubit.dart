@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:meta/meta.dart';
 import 'package:tsd/models/sscc.dart';
+import 'package:tsd/models/ssccModel.dart';
 import 'package:tsd/utils/repository.dart';
 
 part 'sscc_state.dart';
@@ -17,18 +18,22 @@ class SsccCubit extends Cubit<SsccState> {
     String dmValue = '';
     bool eanVisibility = false;
     bool dmVisibility = false;
+    int ssccCount = 0;
+    int eanCount = 0;
     emit(SsccLoading());
     emit(SsccLoaded(
         ssccValue: ssccValue,
         eanValue: eanValue,
         dmValue: dmValue,
         eanVisibility: eanVisibility,
-        dmVisibility: dmVisibility));
+        dmVisibility: dmVisibility,
+        ssccCount: ssccCount, eanCount: eanCount));
   }
 
   Future<void> scanSscc(String scanCode) async {
     // String ssccCount;
-    String eanCount;
+    // String eanCount;
+    SsccModel ssccModel = SsccModel();
     if (state is SsccLoaded) {
       var currentState = state as SsccLoaded;
 //Определяем тип отсканированного кода
@@ -51,7 +56,7 @@ class SsccCubit extends Cubit<SsccState> {
         currentState.dmValue = '';
         currentState.dmVisibility = false;
         currentState.ssccValue = scanCode;
-        currentState.ssccCount = await DataRepository().getSsccCount(scanCode);
+        currentState.ssccCount = int.parse( await DataRepository().getSsccCount(scanCode));
       }
       if (codeType == CodeType.ean) {
         //Показываем DM, значение в EAN
@@ -71,14 +76,14 @@ class SsccCubit extends Cubit<SsccState> {
             currentState.eanValue != '' &&
             currentState.dmValue != '') {
           try {
-            currentState.ssccCount = await DataRepository().addSscc(Sscc(
+            ssccModel = await DataRepository().addSscc(Sscc(
                 sscc: currentState.ssccValue,
                 ean: currentState.eanValue,
                 datamatrix: currentState.dmValue,
                 isUsed: true));
+            currentState.ssccCount = ssccModel.ssccCount;
+            currentState.eanCount = ssccModel.eanCount;
           } catch (e) {
-             
-            
             print('error!');
             print(e);
             emit(SsccError(message: e.toString()));
@@ -94,7 +99,7 @@ class SsccCubit extends Cubit<SsccState> {
           eanValue: currentState.eanValue,
           eanVisibility: currentState.eanVisibility,
           ssccValue: currentState.ssccValue,
-          ssccCount: currentState.ssccCount));
+          ssccCount: currentState.ssccCount, eanCount: currentState.eanCount));
     }
   }
 }
