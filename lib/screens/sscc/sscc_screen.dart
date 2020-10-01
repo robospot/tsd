@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pda_scanner/pda_lifecycle_mixin.dart';
 import 'package:pda_scanner/pda_listener_mixin.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pda_scanner/pda_source.dart';
 
 import 'cubit/sscc_cubit.dart';
 
@@ -15,7 +13,7 @@ class _SsccScreenState extends State<SsccScreen> {
   @override
   void initState() {
     super.initState();
-    PdaSource.init();
+    // PdaSource.init();
     final ssccCubit = context.bloc<SsccCubit>();
     ssccCubit.initSscc();
   }
@@ -52,7 +50,6 @@ class _SsccWidgetState extends State<SsccWidget>
         final snackBar = SnackBar(
           content: Text('${state.message}'),
           backgroundColor: Colors.red,
-
         );
 
         // Find the Scaffold in the widget tree and use
@@ -84,7 +81,7 @@ class _SsccWidgetState extends State<SsccWidget>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Название позиции',
+                          '${state.eanDescription}',
                           style: Theme.of(context).textTheme.headline4,
                         ),
                         SizedBox(
@@ -149,17 +146,23 @@ class _SsccWidgetState extends State<SsccWidget>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Количество КМ в SSCC"),
-                            Text('${state.ssccCount}',style: Theme.of(context).textTheme.headline4,)
+                            Text(
+                              '${state.ssccCount}',
+                              style: Theme.of(context).textTheme.headline4,
+                            )
                           ],
                         ),
-                         SizedBox(
+                        SizedBox(
                           height: 8,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Количество КМ в EAN"),
-                            Text('${state.eanCount}',style: Theme.of(context).textTheme.headline4,)
+                            Text(
+                              '${state.eanCount}',
+                              style: Theme.of(context).textTheme.headline4,
+                            )
                           ],
                         )
                       ],

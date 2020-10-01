@@ -16,6 +16,7 @@ class SsccCubit extends Cubit<SsccState> {
     String ssccValue = '';
     String eanValue = '';
     String dmValue = '';
+    String eanDescription = 'Название позиции';
     bool eanVisibility = false;
     bool dmVisibility = false;
     int ssccCount = 0;
@@ -27,7 +28,9 @@ class SsccCubit extends Cubit<SsccState> {
         dmValue: dmValue,
         eanVisibility: eanVisibility,
         dmVisibility: dmVisibility,
-        ssccCount: ssccCount, eanCount: eanCount));
+        ssccCount: ssccCount,
+        eanCount: eanCount,
+        eanDescription: eanDescription));
   }
 
   Future<void> scanSscc(String scanCode) async {
@@ -56,7 +59,11 @@ class SsccCubit extends Cubit<SsccState> {
         currentState.dmValue = '';
         currentState.dmVisibility = false;
         currentState.ssccValue = scanCode;
-        currentState.ssccCount = int.parse( await DataRepository().getSsccCount(scanCode));
+
+//Подсчет кол-ва КМ в SSCC
+        ssccModel = await DataRepository().getSsccCount(scanCode);
+        currentState.ssccCount = ssccModel.ssccCount;
+        currentState.eanCount = 0;
       }
       if (codeType == CodeType.ean) {
         //Показываем DM, значение в EAN
@@ -65,6 +72,12 @@ class SsccCubit extends Cubit<SsccState> {
         currentState.dmVisibility = true;
         currentState.dmValue = '';
         currentState.eanValue = scanCode;
+
+        ssccModel = await DataRepository().getEanCount(scanCode);
+        // print(ssccModel.toString());
+        currentState.eanCount = ssccModel.eanCount;
+        currentState.eanDescription = ssccModel.eanDescription ?? 'Название позиции';
+        // print(currentState.eanDescription);
       }
 
       if (codeType == CodeType.dm) {
@@ -91,6 +104,7 @@ class SsccCubit extends Cubit<SsccState> {
         }
       }
 
+//Передаем полученную структуру
       print('ScanCode: $scanCode');
       emit(SsccLoading());
       emit(SsccLoaded(
@@ -99,7 +113,9 @@ class SsccCubit extends Cubit<SsccState> {
           eanValue: currentState.eanValue,
           eanVisibility: currentState.eanVisibility,
           ssccValue: currentState.ssccValue,
-          ssccCount: currentState.ssccCount, eanCount: currentState.eanCount));
+          ssccCount: currentState.ssccCount,
+          eanCount: currentState.eanCount,
+          eanDescription: currentState.eanDescription));
     }
   }
 }

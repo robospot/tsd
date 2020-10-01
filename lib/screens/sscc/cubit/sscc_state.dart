@@ -15,6 +15,7 @@ class SsccLoaded extends SsccState {
   bool dmVisibility;
   int ssccCount;
   int eanCount;
+  String eanDescription;
   SsccLoaded(
       {this.ssccValue,
       this.eanValue,
@@ -22,11 +23,12 @@ class SsccLoaded extends SsccState {
       this.eanVisibility,
       this.dmVisibility,
       this.ssccCount,
-      this.eanCount});
+      this.eanCount,
+      this.eanDescription});
 }
 
 class SsccError extends SsccState {
- final String message;
+  final String message;
 
   SsccError({
     this.message,

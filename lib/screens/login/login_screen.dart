@@ -69,5 +69,5 @@ class _LoginWidgetState extends State<LoginWidget> {
 }
 
 loginAction(BuildContext context) {
-  Navigator.of(context).pushReplacementNamed('acquisition');
+  Navigator.of(context).pushReplacementNamed('/home');
 }
