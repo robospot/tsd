@@ -66,7 +66,7 @@ class Sscc {
 
   String toJson() => json.encode(toMap());
 
-  factory Sscc.fromJson(String source) => Sscc.fromMap(json.decode(source));
+  factory Sscc.fromJson(var source) => Sscc.fromMap(source);
 
   @override
   String toString() {

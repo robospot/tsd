@@ -13,3 +13,11 @@ class PackinglistLoaded extends PackinglistState {
   List<String> ssccList;
   PackinglistLoaded({this.packListCode, this.sscc, this.ssccList});
 }
+
+class PackinglistError extends PackinglistState {
+  final String message;
+
+  PackinglistError({
+    this.message,
+  });
+}

@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:tsd/models/packList.dart';
+import 'package:tsd/utils/repository.dart';
 
 part 'packinglist_state.dart';
 
@@ -30,21 +32,34 @@ class PackinglistCubit extends Cubit<PackinglistState> {
       switch (codeType) {
         case CodeType.packList:
           currentState.packListCode = scanCode;
+          List<String> plList =
+              await DataRepository().getPackListById(scanCode);
+          // print(plList);
+          currentState.ssccList = plList;
           break;
         case CodeType.sscc:
           currentState.sscc = scanCode;
           if (currentState.ssccList.contains(scanCode)) {
             currentState.ssccList.remove(scanCode);
+            await DataRepository().addPackList(PackList(
+                sscc: currentState.sscc, packList: currentState.packListCode));
           } else {
-            currentState.ssccList.add(scanCode);
+            try {
+              await DataRepository().addPackList(PackList(
+                  sscc: currentState.sscc,
+                  packList: currentState.packListCode));
+              currentState.ssccList.add(scanCode);
+            } catch (e) {
+              print('error: $e');
+              emit(PackinglistError(message: e.toString()));
+            }
           }
           break;
 
         default:
-          currentState.ssccList.add(scanCode);
+          // currentState.ssccList.add(scanCode);
           break;
       }
-  
 
       emit(PackinglistLoading());
 

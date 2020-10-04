@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import 'package:tsd/models/packList.dart';
 import 'package:tsd/models/sscc.dart';
 import 'package:tsd/models/ssccModel.dart';
 
@@ -64,6 +67,40 @@ class DataRepository {
       print('Network connection error');
       NetworkException();
       return null;
+    }
+  }
+
+  Future<void> addPackList(PackList pl) async {
+    print('request:');
+    print('${pl.toJson()}');
+    var headers = {"Content-Type": "application/json"};
+    final http.Response response = await http.post(
+        '${ConfigStorage.baseUrl}packlist',
+        body: pl.toJson(),
+        headers: headers);
+    if (response.statusCode == 200) {
+      print(response.body);
+      return null;
+      // return data;
+    } else {
+      // print(response.body);
+      // response.print('Network connection error');
+      throw Exception(response.body);
+    }
+  }
+
+  Future<List<String>> getPackListById(String packList) async {
+    var headers = {"Content-Type": "application/json"};
+    final http.Response response = await http
+        .get('${ConfigStorage.baseUrl}packlist/$packList', headers: headers);
+    if (response.statusCode == 200) {
+      var plList = (json.decode(response.body) as List)
+          .map((e) => e['sscc'] as String)
+          .toList();
+      print(plList);
+      return plList;
+    } else {
+      throw Exception(response.body);
     }
   }
 }
