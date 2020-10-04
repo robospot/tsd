@@ -10,13 +10,7 @@ class SsccScreen extends StatefulWidget {
 }
 
 class _SsccScreenState extends State<SsccScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // PdaSource.init();
-    final ssccCubit = context.bloc<SsccCubit>();
-    ssccCubit.initSscc();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {

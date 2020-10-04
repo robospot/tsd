@@ -9,5 +9,7 @@ class PackinglistLoading extends PackinglistState {}
 
 class PackinglistLoaded extends PackinglistState {
   String packListCode;
-  PackinglistLoaded({this.packListCode});
+  String sscc;
+  List<String> ssccList;
+  PackinglistLoaded({this.packListCode, this.sscc, this.ssccList});
 }

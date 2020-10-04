@@ -11,11 +11,13 @@ class _AppSettingsState extends State<AppSettings> {
   Widget build(BuildContext context) {
     return Container(
         child: SettingsScreen(title: "Настройки", children: [
-           
+           SettingsGroup(
+   title: 'Настройка длины ШК',
+   children: <Widget>[
                    TextInputSettingsTile(
-                title: 'Длина SSCC',
+                title: 'Длина кода SSCC',
                 settingKey: 'sscc_length',
-                initialValue: '10',
+                initialValue: '15',
                 validator: (String ssccLength) {
                   if (ssccLength != null && ssccLength.length != 0) {
                     return null;
@@ -26,7 +28,7 @@ class _AppSettingsState extends State<AppSettings> {
                 errorColor: Colors.deepOrangeAccent,
               ),
                  TextInputSettingsTile(
-                title: 'Длина EAN',
+                title: 'Длина кода EAN',
                 settingKey: 'ean_length',
                 initialValue: '13',
                 validator: (String eanLength) {
@@ -38,6 +40,35 @@ class _AppSettingsState extends State<AppSettings> {
                 borderColor: Colors.blueAccent,
                 errorColor: Colors.deepOrangeAccent,
               ),
+               TextInputSettingsTile(
+                title: 'Длина кода упаковочного листа',
+                settingKey: 'packlist_length',
+                initialValue: '11',
+                validator: (String packlistlength) {
+                  if (packlistlength != null && packlistlength.length != 0) {
+                    return null;
+                  }
+                  return "Поле не может быть пустым";
+                },
+                borderColor: Colors.blueAccent,
+                errorColor: Colors.deepOrangeAccent,
+              ),
+   ]),
+   RadioSettingsTile<int>(
+  title: 'Язык',
+  settingKey: 'language',
+  values: <int, String>{
+    0: 'Русский',
+    1: 'English',
+    
+  },
+  selected: Settings.getValue<int>('language', 0),
+
+  onChange: (value) {
+    
+  },
+)
+
         ]));
   }
 }

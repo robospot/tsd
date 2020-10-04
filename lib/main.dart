@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:tsd/screens/home/home_screen.dart';
+import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/packingList/packingList_screen.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'screens/login/login_screen.dart';
@@ -12,6 +13,7 @@ void main() {
   Settings.init();
   runApp(MultiBlocProvider(providers: [
     BlocProvider<SsccCubit>(create: (BuildContext context) => SsccCubit()),
+    BlocProvider<PackinglistCubit>(create: (BuildContext context) => PackinglistCubit()),
   ], child: MyApp()));
 }
 

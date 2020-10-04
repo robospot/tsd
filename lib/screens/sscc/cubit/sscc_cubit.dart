@@ -7,7 +7,7 @@ import 'package:tsd/utils/repository.dart';
 
 part 'sscc_state.dart';
 
-enum CodeType { sscc, ean, dm }
+enum CodeType { sscc, ean, dm, packList }
 
 class SsccCubit extends Cubit<SsccState> {
   SsccCubit() : super(SsccInitial());
@@ -40,69 +40,134 @@ class SsccCubit extends Cubit<SsccState> {
     if (state is SsccLoaded) {
       var currentState = state as SsccLoaded;
 //Определяем тип отсканированного кода
-      CodeType codeType;
-      //EAN
-      if (scanCode.length ==
-          int.parse(Settings.getValue<String>('ean_length', '13'))) {
-        codeType = CodeType.ean;
-        //Если <=15, то SSCC
-      } else if (scanCode.length <= 15) {
-        codeType = CodeType.sscc;
-      } else
-        codeType = CodeType.dm;
 
-      if (codeType == CodeType.sscc) {
-        //Показываем EAN, значение в SSCC
-        // if (currentState.eanVisibility == false) {
-        currentState.eanVisibility = true;
-        currentState.eanValue = '';
-        currentState.dmValue = '';
-        currentState.dmVisibility = false;
-        currentState.ssccValue = scanCode;
+      CodeType codeType;
+      switch (scanCode.length) {
+        case 13:
+          codeType = CodeType.ean;
+          break;
+        case 15:
+          codeType = CodeType.sscc;
+          break;
+        case 11:
+          codeType = CodeType.packList;
+          break;
+        default:
+          codeType = CodeType.dm;
+          break;
+      }
+      switch (codeType) {
+        case CodeType.sscc:
+          //Показываем EAN, значение в SSCC
+
+          currentState.eanVisibility = true;
+          currentState.eanValue = '';
+          currentState.dmValue = '';
+          currentState.dmVisibility = false;
+          currentState.ssccValue = scanCode;
 
 //Подсчет кол-ва КМ в SSCC
-        ssccModel = await DataRepository().getSsccCount(scanCode);
-        currentState.ssccCount = ssccModel.ssccCount;
-        currentState.eanCount = 0;
-      }
-      if (codeType == CodeType.ean) {
-        //Показываем DM, значение в EAN
+          ssccModel = await DataRepository().getSsccCount(scanCode);
+          currentState.ssccCount = ssccModel.ssccCount;
+          currentState.eanCount = 0;
+          break;
+        case CodeType.ean:
+          //Показываем DM, значение в EAN
 
-        currentState.eanVisibility = true;
-        currentState.dmVisibility = true;
-        currentState.dmValue = '';
-        currentState.eanValue = scanCode;
+          currentState.eanVisibility = true;
+          currentState.dmVisibility = true;
+          currentState.dmValue = '';
+          currentState.eanValue = scanCode;
 
-        ssccModel = await DataRepository().getEanCount(scanCode);
-        // print(ssccModel.toString());
-        currentState.eanCount = ssccModel.eanCount;
-        currentState.eanDescription = ssccModel.eanDescription ?? 'Название позиции';
-        // print(currentState.eanDescription);
-      }
+          ssccModel = await DataRepository().getEanCount(scanCode);
 
-      if (codeType == CodeType.dm) {
-        //Значение в DM
+          currentState.eanCount = ssccModel.eanCount;
+          currentState.eanDescription =
+              ssccModel.eanDescription ?? 'Название позиции';
 
-        currentState.dmValue = scanCode;
-        //Проверяем что все поля заполнены
-        if (currentState.ssccValue != '' &&
-            currentState.eanValue != '' &&
-            currentState.dmValue != '') {
-          try {
-            ssccModel = await DataRepository().addSscc(Sscc(
-                sscc: currentState.ssccValue,
-                ean: currentState.eanValue,
-                datamatrix: currentState.dmValue,
-                isUsed: true));
-            currentState.ssccCount = ssccModel.ssccCount;
-            currentState.eanCount = ssccModel.eanCount;
-          } catch (e) {
-            print('error!');
-            print(e);
-            emit(SsccError(message: e.toString()));
+          break;
+
+        case CodeType.dm:
+          //Значение в DM
+
+          currentState.dmValue = scanCode;
+          //Проверяем что все поля заполнены
+          if (currentState.ssccValue != '' &&
+              currentState.eanValue != '' &&
+              currentState.dmValue != '') {
+            try {
+              ssccModel = await DataRepository().addSscc(Sscc(
+                  sscc: currentState.ssccValue,
+                  ean: currentState.eanValue,
+                  datamatrix: currentState.dmValue,
+                  isUsed: true));
+              currentState.ssccCount = ssccModel.ssccCount;
+              currentState.eanCount = ssccModel.eanCount;
+            } catch (e) {
+              print('error!');
+              print(e);
+              emit(SsccError(message: e.toString()));
+            }
           }
-        }
+          break;
+
+        default:
+          break;
       }
+
+//       if (codeType == CodeType.sscc) {
+//         //Показываем EAN, значение в SSCC
+//         // if (currentState.eanVisibility == false) {
+//         currentState.eanVisibility = true;
+//         currentState.eanValue = '';
+//         currentState.dmValue = '';
+//         currentState.dmVisibility = false;
+//         currentState.ssccValue = scanCode;
+
+// //Подсчет кол-ва КМ в SSCC
+//         ssccModel = await DataRepository().getSsccCount(scanCode);
+//         currentState.ssccCount = ssccModel.ssccCount;
+//         currentState.eanCount = 0;
+//       }
+//       if (codeType == CodeType.ean) {
+//         //Показываем DM, значение в EAN
+
+//         currentState.eanVisibility = true;
+//         currentState.dmVisibility = true;
+//         currentState.dmValue = '';
+//         currentState.eanValue = scanCode;
+
+//         ssccModel = await DataRepository().getEanCount(scanCode);
+//         // print(ssccModel.toString());
+//         currentState.eanCount = ssccModel.eanCount;
+//         currentState.eanDescription =
+//             ssccModel.eanDescription ?? 'Название позиции';
+//         // print(currentState.eanDescription);
+//       }
+
+//       if (codeType == CodeType.dm) {
+//         //Значение в DM
+
+//         currentState.dmValue = scanCode;
+//         //Проверяем что все поля заполнены
+//         if (currentState.ssccValue != '' &&
+//             currentState.eanValue != '' &&
+//             currentState.dmValue != '') {
+//           try {
+//             ssccModel = await DataRepository().addSscc(Sscc(
+//                 sscc: currentState.ssccValue,
+//                 ean: currentState.eanValue,
+//                 datamatrix: currentState.dmValue,
+//                 isUsed: true));
+//             currentState.ssccCount = ssccModel.ssccCount;
+//             currentState.eanCount = ssccModel.eanCount;
+//           } catch (e) {
+//             print('error!');
+//             print(e);
+//             emit(SsccError(message: e.toString()));
+//           }
+//         }
+//       }
 
 //Передаем полученную структуру
       print('ScanCode: $scanCode');
