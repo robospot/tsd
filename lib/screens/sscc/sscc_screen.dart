@@ -190,6 +190,6 @@ class _SsccWidgetState extends State<SsccWidget>
 
   @override
   void onError(Object error) {
-    /// TODO: implement onError
+    
   }
 }

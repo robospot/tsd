@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:meta/meta.dart';
 import 'package:tsd/models/sscc.dart';
 import 'package:tsd/models/ssccModel.dart';

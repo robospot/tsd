@@ -4,8 +4,12 @@ import 'package:tsd/screens/appsettings/appsettings.dart';
 import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tsd/utils/authentication/bloc/authentication_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => HomeScreen());
+  }
   HomeScreen({Key key}) : super(key: key);
 
   @override
@@ -27,7 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
               icon: Icon(Icons.settings),
               onPressed: () => clickOnSettings(context)
-              )
+              ),
+              IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () => context
+                    .bloc<AuthenticationBloc>()
+                    .add(AuthenticationLogoutRequested()),
+              ),
         ],),
           body: Container(margin: EdgeInsets.all(16),
          child: ListView(children: [
