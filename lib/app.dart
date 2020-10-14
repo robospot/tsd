@@ -80,7 +80,45 @@ class _AppViewState extends State<AppView> {
           '/acquisition': (context) => SsccScreen(),
           '/home': (context) => HomeScreen(),
           '/packingList': (context) => PackingListScreen(),
-        }
+        },
+         theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            color: Color(0xff445E75),
+            centerTitle: true,
+          ),
+          buttonTheme: ButtonThemeData(
+            textTheme: ButtonTextTheme.primary,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            buttonColor: Color(0xff3678AF),
+          ),
+          textTheme: TextTheme(
+              headline4: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w300,
+                  color: Color(0xff445E75)),
+                  bodyText1: TextStyle(
+fontSize: 24,
+                  fontFamily: 'Open Sans',
+                  // fontWeight: FontWeight.w300,
+                  color: Color(0xff445E75)),
+
+                  bodyText2: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontSize: 16,
+                  // fontWeight: FontWeight.w300,
+                  color: Color(0xff445E75))
+                  ),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: Color(0xff1A76767B),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide.none),
+          ),
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
     );
   }
 }

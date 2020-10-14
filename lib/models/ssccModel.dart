@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 class SsccModel {
   String eanDescription;
   int ssccCount;

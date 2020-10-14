@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:tsd/models/packList.dart';
 import 'package:tsd/models/sscc.dart';
@@ -8,11 +9,6 @@ import 'package:tsd/models/ssccModel.dart';
 
 import 'authentication/auth_dio.dart';
 import 'constants.dart';
-
-abstract class Repository {
-  /// Throws [NetworkException].
-  // Future<void> addSscc(Sscc sscc);
-}
 
 class DataRepository {
   var oauth = OAuth(
@@ -22,9 +18,18 @@ class DataRepository {
   Future<SsccModel> addSscc(Sscc sscc) async {
     print('${sscc.toJson()}');
     request.interceptors.add(BearerInterceptor(oauth));
-    var response =
-        await request.put('${ConfigStorage.baseUrl}dm', data: sscc.toJson());
-    print('response: $response');
+    try {
+      var response =
+          await request.put('${ConfigStorage.baseUrl}dm', data: sscc.toJson());
+      print('response: $response');
+      return SsccModel.fromJson(response.toString());
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.RESPONSE) {
+        print('error description:');
+        print(e.response);
+        throw e.response;
+      }
+    }
 
     // var headers = {"Content-Type": "application/json"};
     // final http.Response response = await http.put('${ConfigStorage.baseUrl}dm',
@@ -42,9 +47,17 @@ class DataRepository {
 
   Future<SsccModel> getSsccCount(String ssccCode) async {
     request.interceptors.add(BearerInterceptor(oauth));
-    var response = await request.get('${ConfigStorage.baseUrl}sscc/$ssccCode');
-    return SsccModel.fromJson(response.toString());
-
+    try {
+      var response =
+          await request.get('${ConfigStorage.baseUrl}sscc/$ssccCode');
+      return SsccModel.fromJson(response.toString());
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.RESPONSE) {
+        print('error description:');
+        print(e.response);
+        throw e.response;
+      }
+    }
     // var headers = {"Content-Type": "application/json"};
     // final http.Response response = await http
     //     .get('${ConfigStorage.baseUrl}sscc/$ssccCode', headers: headers);
@@ -57,11 +70,24 @@ class DataRepository {
     // }
   }
 
-  Future<SsccModel> getEanCount(String eanCode) async {
+  Future<SsccModel> getEanCount(String sscc, String eanCode) async {
     request.interceptors.add(BearerInterceptor(oauth));
-    var response = await request.get('${ConfigStorage.baseUrl}ean/$eanCode');
-    return SsccModel.fromJson(response.toString());
 
+    //Определения языка для EAN
+    String lang = Settings.getValue<int>('language', 0) == 0 ? 'RU' : 'EN';
+    // request.options.headers['lang'] = lang;
+
+    try {
+      var response = await request.get('${ConfigStorage.baseUrl}ean',
+          queryParameters: {'sscc': sscc, 'ean' : eanCode, 'lang': lang });
+      return SsccModel.fromJson(response.toString());
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.RESPONSE) {
+        print('error description:');
+        print(e.response);
+        throw e.response;
+      }
+    }
     // var headers = {"Content-Type": "application/json"};
     // final http.Response response = await http
     //     .get('${ConfigStorage.baseUrl}ean/$eanCode', headers: headers);
@@ -73,20 +99,6 @@ class DataRepository {
     //   NetworkException();
     //   return null;
     // }
-  }
-
-//Очистка таблицы
-  Future<void> clearDmTable() async {
-    var headers = {"Content-Type": "application/json"};
-    final http.Response response =
-        await http.delete('${ConfigStorage.baseUrl}dm', headers: headers);
-    if (response.statusCode == 200) {
-      return null;
-    } else {
-      print('Network connection error');
-      NetworkException();
-      return null;
-    }
   }
 
   Future<void> addPackList(PackList pl) async {
@@ -104,7 +116,7 @@ class DataRepository {
     } else {
       // print(response.body);
       // response.print('Network connection error');
-      throw Exception(response.body);
+      throw response.body;
     }
   }
 
@@ -119,7 +131,7 @@ class DataRepository {
       print(plList);
       return plList;
     } else {
-      throw Exception(response.body);
+      throw response.body;
     }
   }
 }

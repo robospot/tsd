@@ -65,25 +65,29 @@ class SsccCubit extends Cubit<SsccState> {
           currentState.dmVisibility = false;
           currentState.ssccValue = scanCode;
 
+          //Очищаем имя EAN
+          currentState.eanDescription = 'Название позиции';
 //Подсчет кол-ва КМ в SSCC
           ssccModel = await DataRepository().getSsccCount(scanCode);
           currentState.ssccCount = ssccModel.ssccCount;
           currentState.eanCount = 0;
           break;
         case CodeType.ean:
-          //Показываем DM, значение в EAN
+          //Проверяем что SSCC заполнено
+          if (currentState.ssccValue != '') {
+            //Показываем DM, значение в EAN
 
-          currentState.eanVisibility = true;
-          currentState.dmVisibility = true;
-          currentState.dmValue = '';
-          currentState.eanValue = scanCode;
+            currentState.eanVisibility = true;
+            currentState.dmVisibility = true;
+            currentState.dmValue = '';
+            currentState.eanValue = scanCode;
+//передаем SSCC и EAN чтобы посчитать кол-во позиций
+            ssccModel = await DataRepository().getEanCount(currentState.ssccValue, currentState.eanValue);
 
-          ssccModel = await DataRepository().getEanCount(scanCode);
-
-          currentState.eanCount = ssccModel.eanCount;
-          currentState.eanDescription =
-              ssccModel.eanDescription ?? 'Название позиции';
-
+            currentState.eanCount = ssccModel.eanCount;
+            currentState.eanDescription =
+                ssccModel.eanDescription ?? 'Название позиции';
+          }
           break;
 
         case CodeType.dm:

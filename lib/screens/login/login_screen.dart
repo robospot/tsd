@@ -43,7 +43,18 @@ class _LoginWidgetState extends State<LoginWidget> {
   final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+     return BlocListener<LoginBloc, LoginState>(
+        listener: (context, state) {
+          if (state.status == 'Failure')
+          {
+             final snackBar = SnackBar(
+      backgroundColor: Colors.red, content: Text("Неправильная учетная запись или пароль"));
+            return 
+            Scaffold.of(context).showSnackBar(snackBar);
+          }
+        },
+        child: 
+     SingleChildScrollView(
       child: Container(
           margin: EdgeInsets.symmetric(horizontal: 64, vertical: 64),
           child: Column(
@@ -56,22 +67,24 @@ class _LoginWidgetState extends State<LoginWidget> {
               ),
               TextFormField(controller: _usernameController),
               SizedBox(
-                height: 47,
+                height: 24,
               ),
               Text('Пароль', style: Theme.of(context).textTheme.headline4),
               TextFormField(obscureText: true,
                 controller: _passwordController,
               ),
               SizedBox(
-                height: 72,
+                height: 32,
               ),
-              RaisedButton(
-                onPressed: () => loginAction(context),
-                child: Text("Авторизоваться"),
+              Container(height: 60,
+                child: RaisedButton(
+                  onPressed: () => loginAction(context),
+                  child: Text("Авторизоваться"),
+                ),
               )
             ],
           )),
-    );
+    ));
     
   }
  loginAction(BuildContext context) {

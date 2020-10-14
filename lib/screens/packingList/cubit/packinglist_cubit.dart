@@ -49,7 +49,7 @@ class PackinglistCubit extends Cubit<PackinglistState> {
                   sscc: currentState.sscc,
                   packList: currentState.packListCode));
               currentState.ssccList.add(scanCode);
-            } catch (e) {
+            } catch(e) {
               print('error: $e');
               emit(PackinglistError(message: e.toString()));
             }
