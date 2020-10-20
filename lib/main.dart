@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -11,13 +12,21 @@ import 'utils/authentication/user_repository.dart';
 void main() {
   //Инициализация настроек
   Settings.init();
-  runApp(MultiBlocProvider(providers: [
+  runApp(EasyLocalization(
+    child:MultiBlocProvider(providers: [
     BlocProvider<SsccCubit>(create: (BuildContext context) => SsccCubit()),
     BlocProvider<PackinglistCubit>(create: (BuildContext context) => PackinglistCubit()),
   ], child: App(
     authenticationRepository: AuthenticationRepository(),
     userRepository: UserRepository(),
-  )));
+  )),
+  supportedLocales: [
+      Locale('en', 'US'),
+      Locale('ru', 'RU')
+    ],
+  path: 'assets/translations', 
+   fallbackLocale: Locale('en', 'US'),
+  ));
 }
 
 // class MyApp extends StatelessWidget {

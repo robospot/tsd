@@ -5,6 +5,7 @@ import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tsd/utils/authentication/bloc/authentication_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   static Route route() {
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Список приложений"),
+        title: Text("appBar_AppList".tr()),
         actions: [
           IconButton(
               icon: Icon(Icons.settings),
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               ListTile(
                   title: Text(
-                    'Комплектование',
+                    'appList_acquisition'.tr(),
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   onTap: () => Navigator.of(context).pushNamed('/acquisition')),
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.grey,
               ),
               ListTile(
-                  title: Text('Упаковочный лист',
+                  title: Text('appList_packing_list'.tr(),
                       style: Theme.of(context).textTheme.bodyText1),
                   onTap: () => Navigator.of(context).pushNamed('/packingList')),
               Divider(

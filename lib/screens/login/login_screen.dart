@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tsd/screens/appsettings/appsettings.dart';
 import 'package:tsd/screens/login/bloc/login_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Вход'),
+        title: Text('appBar_Authorization'.tr()),
         actions: [
           IconButton(
               icon: Icon(Icons.settings),
@@ -62,14 +63,14 @@ class _LoginWidgetState extends State<LoginWidget> {
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Логин',
+                'login_userName'.tr(),
                 style: Theme.of(context).textTheme.headline4,
               ),
               TextFormField(controller: _usernameController),
               SizedBox(
                 height: 24,
               ),
-              Text('Пароль', style: Theme.of(context).textTheme.headline4),
+              Text('login_userPassword'.tr(), style: Theme.of(context).textTheme.headline4),
               TextFormField(obscureText: true,
                 controller: _passwordController,
               ),
@@ -79,7 +80,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               Container(height: 60,
                 child: RaisedButton(
                   onPressed: () => loginAction(context),
-                  child: Text("Авторизоваться"),
+                  child: Text("login_signIn".tr()),
                 ),
               )
             ],

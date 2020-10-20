@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tsd/models/sscc.dart';
 import 'package:tsd/models/ssccModel.dart';
 import 'package:tsd/utils/repository.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 part 'sscc_state.dart';
 
@@ -15,7 +16,7 @@ class SsccCubit extends Cubit<SsccState> {
     String ssccValue = '';
     String eanValue = '';
     String dmValue = '';
-    String eanDescription = 'Название позиции';
+    String eanDescription = 'acquisition_position_name'.tr();
     bool eanVisibility = false;
     bool dmVisibility = false;
     int ssccCount = 0;
@@ -66,7 +67,7 @@ class SsccCubit extends Cubit<SsccState> {
           currentState.ssccValue = scanCode;
 
           //Очищаем имя EAN
-          currentState.eanDescription = 'Название позиции';
+          currentState.eanDescription = 'acquisition_position_name'.tr();
 //Подсчет кол-ва КМ в SSCC
           ssccModel = await DataRepository().getSsccCount(scanCode);
           currentState.ssccCount = ssccModel.ssccCount;
@@ -86,7 +87,7 @@ class SsccCubit extends Cubit<SsccState> {
 
             currentState.eanCount = ssccModel.eanCount;
             currentState.eanDescription =
-                ssccModel.eanDescription ?? 'Название позиции';
+                ssccModel.eanDescription ?? 'acquisition_position_name'.tr();
           }
           break;
 

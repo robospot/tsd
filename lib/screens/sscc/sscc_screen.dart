@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pda_scanner/pda_listener_mixin.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'cubit/sscc_cubit.dart';
 
 class SsccScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class _SsccScreenState extends State<SsccScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Комплектование'),
+        title: Text('appBar_Acquisition'.tr()),
       ),
       body: SsccWidget(),
     );
@@ -85,7 +85,7 @@ class _SsccWidgetState extends State<SsccWidget>
                           enabled: false,
                           controller: sscccontroller,
                           decoration: InputDecoration(
-                            labelText: 'скан. SSCC',
+                            labelText: 'acquisition_SSCC_scan'.tr(),
                             // suffixIcon: IconButton(
                             //   icon: Icon(
                             //     Icons.clear,
@@ -104,7 +104,7 @@ class _SsccWidgetState extends State<SsccWidget>
                             enabled: false,
                             controller: eancontroller,
                             decoration: InputDecoration(
-                              labelText: 'скан. EAN',
+                              labelText: 'acquisition_EAN_scan'.tr(),
                               // suffixIcon: IconButton(
                               //     icon: Icon(
                               //       Icons.clear,
@@ -123,7 +123,7 @@ class _SsccWidgetState extends State<SsccWidget>
                             enabled: false,
                             controller: dmcontroller,
                             decoration: InputDecoration(
-                              labelText: 'скан. КМ',
+                              labelText: 'acquisition_DM_scan'.tr(),
                               // suffixIcon: IconButton(
                               //     icon: Icon(
                               //       Icons.clear,
@@ -139,7 +139,7 @@ class _SsccWidgetState extends State<SsccWidget>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Количество КМ в SSCC"),
+                            Text("acquisition_KM_SSCC".tr()),
                             Text(
                               '${state.ssccCount}',
                               style: Theme.of(context).textTheme.headline4,
@@ -152,7 +152,7 @@ class _SsccWidgetState extends State<SsccWidget>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Количество КМ в EAN"),
+                            Text("acquisition_KM_EAN".tr()),
                             Text(
                               '${state.eanCount}',
                               style: Theme.of(context).textTheme.headline4,

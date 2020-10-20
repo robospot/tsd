@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pda_scanner/pda_listener_mixin.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'cubit/packinglist_cubit.dart';
 
 class PackingListScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _PackingListScreenState extends State<PackingListScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Упаковочный лист"),
+          title: Text("appList_Packing_list".tr()),
         ),
         body: BlocConsumer<PackinglistCubit, PackinglistState>(
             listener: (context, state) {
@@ -53,7 +53,7 @@ class _PackingListScreenState extends State<PackingListScreen>
                       enabled: false,
                       controller: plistController,
                       decoration: InputDecoration(
-                        labelText: 'Номер упаковочного листа',
+                        labelText: 'packlist_num_input'.tr(),
                         // suffixIcon: IconButton(
                         //   icon: Icon(
                         //     Icons.clear,
@@ -66,7 +66,7 @@ class _PackingListScreenState extends State<PackingListScreen>
                     SizedBox(
                       height: 16,
                     ),
-                    Text("Список SSCC"),
+                    Text("packlist_SSCC_list".tr()),
                     SizedBox(
                       height: 8,
                     ),

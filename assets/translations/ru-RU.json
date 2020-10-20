@@ -1,0 +1,32 @@
+{
+    "appBar_AppList": "Приложения",
+    "appBar_Authorization": "Авторизация",
+    "appBar_Settings": "Настройки",
+    "appBar_Acquisition": "Комплектование",
+    "appList_Packing_list": "Упаковочный лист",
+
+    
+    "login_userName": "Логин",
+    "login_userPassword": "Пароль",
+    "login_signIn": "Авторизоваться",
+    
+    "settings_title1": "Настройка длины ШК",
+    "settings_sscc_length": "Длина кода SSCC",
+    "settings_ean_length": "Длина кода EAN",
+    "settings_pl_length": "Длина кда упаковочного листа",
+    "settings_language": "Язык",
+
+    "appList_acquisition": "Комплектование",
+    "appList_packing_list": "Упаковочный лист",
+
+    "acquisition_position_name": "Название позиции",
+    "acquisition_SSCC_scan": "скан. SSCC",
+    "acquisition_EAN_scan": "скан. EAN",
+    "acquisition_DM_scan": "скан. КМ",
+    "acquisition_KM_SSCC": "Количество КМ в SSCC",
+    "acquisition_KM_EAN": "Количество КМ в EAN",
+
+    "packlist_num_input": "Номер упаковочного листа",
+    "packlist_SSCC_list": "Список SSCC"
+
+}

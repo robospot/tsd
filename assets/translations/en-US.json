@@ -1,0 +1,34 @@
+{
+    "appBar_AppList" : "Applications",
+    "appBar_Authorization": "Authorization",
+    "appBar_Settings": "Settings",
+    "appBar_Acquisition": "Acquisition",
+    "appList_Packing_list": "Packing List",
+
+
+    "login_userName": "Username",
+    "login_userPassword": "Password",
+    "login_signIn": "Sign in",
+
+    "settings_title1": "Setting barcode length",
+    "settings_sscc_length": "SSCC code length",
+    "settings_ean_length": "EAN code length",
+    "settings_pl_length": "Packing list code length",
+    "settings_language": "Language",
+
+    "appList_acquisition": "Acquisition",
+    "appList_packing_list": "Packing List",
+
+    "acquisition_position_name": "Position name",
+    "acquisition_SSCC_scan": "SSCC scan",
+    "acquisition_EAN_scan": "EAN scan",
+    "acquisition_DM_scan": "DM scan",
+    "acquisition_KM_SSCC": "DM in SSCC amount",
+    "acquisition_KM_EAN": "DM in EAN amount",
+
+    "packlist_num_input": "Packing list number",
+    "packlist_SSCC_list": "SSCC list"
+
+
+  
+}

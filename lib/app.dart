@@ -9,6 +9,7 @@ import 'screens/sscc/sscc_screen.dart';
 import 'utils/authentication/authentication_repository.dart';
 import 'utils/authentication/bloc/authentication_bloc.dart';
 import 'utils/authentication/user_repository.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -119,6 +120,10 @@ fontSize: 24,
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
+
+        localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
     );
   }
 }
