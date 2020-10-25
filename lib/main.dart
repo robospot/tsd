@@ -16,7 +16,7 @@ void main() {
   Settings.init();
 
   //Moor db
-  final db = AppDatabase().materialDao;
+  final db = AppDatabase();
 
   runApp(EasyLocalization(
     child:MultiBlocProvider(providers: [

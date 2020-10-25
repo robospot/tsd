@@ -10,7 +10,16 @@ class Materials extends Table {
   TextColumn get updatedAt => text()();
 }
 
-@UseMoor(tables: [Materials], daos: [MaterialDao])
+class Ssccs extends Table {
+  IntColumn get organization => integer().nullable()();
+  TextColumn get sscc => text().nullable()();
+  TextColumn get ean => text()();
+  TextColumn get datamatrix => text()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+}
+
+@UseMoor(tables: [Materials, Ssccs], daos: [MaterialDao, SsccDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
       : super(FlutterQueryExecutor.inDatabaseFolder(
@@ -21,24 +30,20 @@ class AppDatabase extends _$AppDatabase {
 }
 
 @UseDao(tables: [Materials])
-class MaterialDao extends DatabaseAccessor<AppDatabase> with _$MaterialDaoMixin {
+class MaterialDao extends DatabaseAccessor<AppDatabase>
+    with _$MaterialDaoMixin {
   final AppDatabase db;
 
-  // Called by the AppDatabase class
   MaterialDao(this.db) : super(db);
 
-  // // All tables have getters in the generated class - we can select the tasks table
-  // Future<List<Material>> getAllMaterials() => select(materials).get();
-
-  // // Moor supports Streams which emit elements when the watched data changes
-  // Stream<List<Material>> watchAllMaterials() => select(materials).watch();
-
   Future insertMaterial(Insertable<Material> m) => into(materials).insert(m);
+}
 
-  // // Updates a Task with a matching primary key
-  // Future updateMaterial(Material material) =>
-  //     update(materials).replace(material);
+@UseDao(tables: [Ssccs])
+class SsccDao extends DatabaseAccessor<AppDatabase> with _$SsccDaoMixin {
+  final AppDatabase db;
 
-  // Future deleteMaterial(Material material) =>
-  //     delete(materials).delete(material);
+  SsccDao(this.db) : super(db);
+
+  Future insertSscc(Insertable<Sscc> s) => into(ssccs).insert(s);
 }

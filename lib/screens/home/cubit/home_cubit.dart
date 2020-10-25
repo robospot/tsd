@@ -7,27 +7,18 @@ import 'package:tsd/utils/repository.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final MaterialDao db;
+  final AppDatabase db;
   HomeCubit(this.db) : super(HomeInitial());
 
   Future<void> getOfflineData() async {
     List<Material> materialList = await DataRepository().getMaterials();
-    await insertMaterials(materialList, db);
+    List<Sscc> ssccList = await DataRepository().getSsccc();
+    await insertMaterials(materialList, db.materialDao);
+    await insertSscc(ssccList, db.ssccDao);
   }
 }
 
 Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
-  // await batch((batch) {
-  // functions in a batch don't have to be awaited - just
-  // await the whole batch afterwards.
-  // batch.insertAll(materials, [
-  //   MaterialsCompanion.insert(
-
-  //   ),
-
-  // ]);
-  // });
-
   materials.forEach((m) {
     final mat = MaterialsCompanion(
         ean: Value(m.ean),
@@ -36,5 +27,18 @@ Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
         updatedAt: Value(m.updatedAt),
         id: Value(m.id));
     db.insertMaterial(mat);
+  });
+}
+
+Future<void> insertSscc(List<Sscc> ssccList, SsccDao db) async {
+  ssccList.forEach((s) {
+    final sscc = SsccsCompanion(
+        sscc: Value(s.sscc),
+        ean: Value(s.ean),
+        datamatrix: Value(s.datamatrix),
+        createdAt: Value(s.createdAt),
+        updatedAt: Value(s.updatedAt));
+
+    db.insertSscc(sscc);
   });
 }

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:tsd/models/sscc.dart';
+import 'package:tsd/models/sscc.dart' ;
 import 'package:tsd/models/ssccModel.dart';
 import 'package:tsd/utils/repository.dart';
 import 'package:easy_localization/easy_localization.dart';

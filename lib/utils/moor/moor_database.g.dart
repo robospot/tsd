@@ -352,17 +352,414 @@ class $MaterialsTable extends Materials
   }
 }
 
+class Sscc extends DataClass implements Insertable<Sscc> {
+  final int organization;
+  final String sscc;
+  final String ean;
+  final String datamatrix;
+  final String createdAt;
+  final String updatedAt;
+  Sscc(
+      {this.organization,
+      this.sscc,
+      @required this.ean,
+      @required this.datamatrix,
+      @required this.createdAt,
+      @required this.updatedAt});
+  factory Sscc.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Sscc(
+      organization: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}organization']),
+      sscc: stringType.mapFromDatabaseResponse(data['${effectivePrefix}sscc']),
+      ean: stringType.mapFromDatabaseResponse(data['${effectivePrefix}ean']),
+      datamatrix: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}datamatrix']),
+      createdAt: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}created_at']),
+      updatedAt: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}updated_at']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || organization != null) {
+      map['organization'] = Variable<int>(organization);
+    }
+    if (!nullToAbsent || sscc != null) {
+      map['sscc'] = Variable<String>(sscc);
+    }
+    if (!nullToAbsent || ean != null) {
+      map['ean'] = Variable<String>(ean);
+    }
+    if (!nullToAbsent || datamatrix != null) {
+      map['datamatrix'] = Variable<String>(datamatrix);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<String>(createdAt);
+    }
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
+    return map;
+  }
+
+  SsccsCompanion toCompanion(bool nullToAbsent) {
+    return SsccsCompanion(
+      organization: organization == null && nullToAbsent
+          ? const Value.absent()
+          : Value(organization),
+      sscc: sscc == null && nullToAbsent ? const Value.absent() : Value(sscc),
+      ean: ean == null && nullToAbsent ? const Value.absent() : Value(ean),
+      datamatrix: datamatrix == null && nullToAbsent
+          ? const Value.absent()
+          : Value(datamatrix),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+    );
+  }
+
+  factory Sscc.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Sscc(
+      organization: serializer.fromJson<int>(json['organization']),
+      sscc: serializer.fromJson<String>(json['sscc']),
+      ean: serializer.fromJson<String>(json['ean']),
+      datamatrix: serializer.fromJson<String>(json['datamatrix']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'organization': serializer.toJson<int>(organization),
+      'sscc': serializer.toJson<String>(sscc),
+      'ean': serializer.toJson<String>(ean),
+      'datamatrix': serializer.toJson<String>(datamatrix),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  Sscc copyWith(
+          {int organization,
+          String sscc,
+          String ean,
+          String datamatrix,
+          String createdAt,
+          String updatedAt}) =>
+      Sscc(
+        organization: organization ?? this.organization,
+        sscc: sscc ?? this.sscc,
+        ean: ean ?? this.ean,
+        datamatrix: datamatrix ?? this.datamatrix,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Sscc(')
+          ..write('organization: $organization, ')
+          ..write('sscc: $sscc, ')
+          ..write('ean: $ean, ')
+          ..write('datamatrix: $datamatrix, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      organization.hashCode,
+      $mrjc(
+          sscc.hashCode,
+          $mrjc(
+              ean.hashCode,
+              $mrjc(datamatrix.hashCode,
+                  $mrjc(createdAt.hashCode, updatedAt.hashCode))))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Sscc &&
+          other.organization == this.organization &&
+          other.sscc == this.sscc &&
+          other.ean == this.ean &&
+          other.datamatrix == this.datamatrix &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SsccsCompanion extends UpdateCompanion<Sscc> {
+  final Value<int> organization;
+  final Value<String> sscc;
+  final Value<String> ean;
+  final Value<String> datamatrix;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const SsccsCompanion({
+    this.organization = const Value.absent(),
+    this.sscc = const Value.absent(),
+    this.ean = const Value.absent(),
+    this.datamatrix = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  SsccsCompanion.insert({
+    this.organization = const Value.absent(),
+    this.sscc = const Value.absent(),
+    @required String ean,
+    @required String datamatrix,
+    @required String createdAt,
+    @required String updatedAt,
+  })  : ean = Value(ean),
+        datamatrix = Value(datamatrix),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Sscc> custom({
+    Expression<int> organization,
+    Expression<String> sscc,
+    Expression<String> ean,
+    Expression<String> datamatrix,
+    Expression<String> createdAt,
+    Expression<String> updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (organization != null) 'organization': organization,
+      if (sscc != null) 'sscc': sscc,
+      if (ean != null) 'ean': ean,
+      if (datamatrix != null) 'datamatrix': datamatrix,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  SsccsCompanion copyWith(
+      {Value<int> organization,
+      Value<String> sscc,
+      Value<String> ean,
+      Value<String> datamatrix,
+      Value<String> createdAt,
+      Value<String> updatedAt}) {
+    return SsccsCompanion(
+      organization: organization ?? this.organization,
+      sscc: sscc ?? this.sscc,
+      ean: ean ?? this.ean,
+      datamatrix: datamatrix ?? this.datamatrix,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (organization.present) {
+      map['organization'] = Variable<int>(organization.value);
+    }
+    if (sscc.present) {
+      map['sscc'] = Variable<String>(sscc.value);
+    }
+    if (ean.present) {
+      map['ean'] = Variable<String>(ean.value);
+    }
+    if (datamatrix.present) {
+      map['datamatrix'] = Variable<String>(datamatrix.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SsccsCompanion(')
+          ..write('organization: $organization, ')
+          ..write('sscc: $sscc, ')
+          ..write('ean: $ean, ')
+          ..write('datamatrix: $datamatrix, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $SsccsTable(this._db, [this._alias]);
+  final VerificationMeta _organizationMeta =
+      const VerificationMeta('organization');
+  GeneratedIntColumn _organization;
+  @override
+  GeneratedIntColumn get organization =>
+      _organization ??= _constructOrganization();
+  GeneratedIntColumn _constructOrganization() {
+    return GeneratedIntColumn(
+      'organization',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _ssccMeta = const VerificationMeta('sscc');
+  GeneratedTextColumn _sscc;
+  @override
+  GeneratedTextColumn get sscc => _sscc ??= _constructSscc();
+  GeneratedTextColumn _constructSscc() {
+    return GeneratedTextColumn(
+      'sscc',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _eanMeta = const VerificationMeta('ean');
+  GeneratedTextColumn _ean;
+  @override
+  GeneratedTextColumn get ean => _ean ??= _constructEan();
+  GeneratedTextColumn _constructEan() {
+    return GeneratedTextColumn(
+      'ean',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _datamatrixMeta = const VerificationMeta('datamatrix');
+  GeneratedTextColumn _datamatrix;
+  @override
+  GeneratedTextColumn get datamatrix => _datamatrix ??= _constructDatamatrix();
+  GeneratedTextColumn _constructDatamatrix() {
+    return GeneratedTextColumn(
+      'datamatrix',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+  GeneratedTextColumn _createdAt;
+  @override
+  GeneratedTextColumn get createdAt => _createdAt ??= _constructCreatedAt();
+  GeneratedTextColumn _constructCreatedAt() {
+    return GeneratedTextColumn(
+      'created_at',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+  GeneratedTextColumn _updatedAt;
+  @override
+  GeneratedTextColumn get updatedAt => _updatedAt ??= _constructUpdatedAt();
+  GeneratedTextColumn _constructUpdatedAt() {
+    return GeneratedTextColumn(
+      'updated_at',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [organization, sscc, ean, datamatrix, createdAt, updatedAt];
+  @override
+  $SsccsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'ssccs';
+  @override
+  final String actualTableName = 'ssccs';
+  @override
+  VerificationContext validateIntegrity(Insertable<Sscc> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('organization')) {
+      context.handle(
+          _organizationMeta,
+          organization.isAcceptableOrUnknown(
+              data['organization'], _organizationMeta));
+    }
+    if (data.containsKey('sscc')) {
+      context.handle(
+          _ssccMeta, sscc.isAcceptableOrUnknown(data['sscc'], _ssccMeta));
+    }
+    if (data.containsKey('ean')) {
+      context.handle(
+          _eanMeta, ean.isAcceptableOrUnknown(data['ean'], _eanMeta));
+    } else if (isInserting) {
+      context.missing(_eanMeta);
+    }
+    if (data.containsKey('datamatrix')) {
+      context.handle(
+          _datamatrixMeta,
+          datamatrix.isAcceptableOrUnknown(
+              data['datamatrix'], _datamatrixMeta));
+    } else if (isInserting) {
+      context.missing(_datamatrixMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at'], _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at'], _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  Sscc map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Sscc.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $SsccsTable createAlias(String alias) {
+    return $SsccsTable(_db, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $MaterialsTable _materials;
   $MaterialsTable get materials => _materials ??= $MaterialsTable(this);
+  $SsccsTable _ssccs;
+  $SsccsTable get ssccs => _ssccs ??= $SsccsTable(this);
   MaterialDao _materialDao;
   MaterialDao get materialDao =>
       _materialDao ??= MaterialDao(this as AppDatabase);
+  SsccDao _ssccDao;
+  SsccDao get ssccDao => _ssccDao ??= SsccDao(this as AppDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [materials];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [materials, ssccs];
 }
 
 // **************************************************************************
@@ -371,4 +768,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 mixin _$MaterialDaoMixin on DatabaseAccessor<AppDatabase> {
   $MaterialsTable get materials => attachedDatabase.materials;
+}
+mixin _$SsccDaoMixin on DatabaseAccessor<AppDatabase> {
+  $SsccsTable get ssccs => attachedDatabase.ssccs;
 }

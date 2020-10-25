@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:tsd/models/packList.dart';
-import 'package:tsd/models/sscc.dart';
+import 'package:tsd/models/sscc.dart' as sModel;
 import 'package:tsd/models/ssccModel.dart';
 
 import 'authentication/auth_dio.dart';
@@ -16,7 +16,7 @@ class DataRepository {
       clientId: "com.tsd", tokenUrl: '${ConfigStorage.baseUrl}auth/token');
   var request = Dio();
 
-  Future<SsccModel> addSscc(Sscc sscc) async {
+  Future<SsccModel> addSscc(sModel.Sscc sscc) async {
     print('${sscc.toJson()}');
     request.interceptors.add(BearerInterceptor(oauth));
     try {
@@ -154,6 +154,19 @@ class DataRepository {
     }
   
   }
+
+  Future<List<Sscc>> getSsccc() async {
+    request.interceptors.add(BearerInterceptor(oauth));
+    Response response = await request.get('${ConfigStorage.baseUrl}dm');
+    
+     var dmList = (response.data as List)
+          .map((e) => Sscc.fromJson(e))
+          .toList();
+      return dmList;
+
+   
+  }
+
 }
 
 
