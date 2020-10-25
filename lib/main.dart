@@ -2,20 +2,27 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:tsd/screens/home/cubit/home_cubit.dart';
 import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'app.dart';
 import 'utils/authentication/authentication_repository.dart';
 import 'utils/authentication/user_repository.dart';
+import 'utils/moor/moor_database.dart';
 
 
 void main() {
   //Инициализация настроек
   Settings.init();
+
+  //Moor db
+  final db = AppDatabase().materialDao;
+
   runApp(EasyLocalization(
     child:MultiBlocProvider(providers: [
     BlocProvider<SsccCubit>(create: (BuildContext context) => SsccCubit()),
     BlocProvider<PackinglistCubit>(create: (BuildContext context) => PackinglistCubit()),
+    BlocProvider<HomeCubit>(create: (BuildContext context) => HomeCubit(db)),
   ], child: App(
     authenticationRepository: AuthenticationRepository(),
     userRepository: UserRepository(),

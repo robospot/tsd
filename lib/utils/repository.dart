@@ -9,6 +9,7 @@ import 'package:tsd/models/ssccModel.dart';
 
 import 'authentication/auth_dio.dart';
 import 'constants.dart';
+import 'moor/moor_database.dart';
 
 class DataRepository {
   var oauth = OAuth(
@@ -134,6 +135,25 @@ class DataRepository {
       throw response.body;
     }
   }
+
+    Future<List<Material>> getMaterials() async {
+    request.interceptors.add(BearerInterceptor(oauth));
+    try {
+      request.interceptors.add(BearerInterceptor(oauth));
+     Response response = await request.get('${ConfigStorage.baseUrl}ean');
+  var materialList = (response.data as List)
+          .map((e) => Material.fromJson(e))
+          .toList();
+      return materialList;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.RESPONSE) {
+        print('error description:');
+        print(e.response);
+        throw e.response;
+      }
+    }
+  
+  }
 }
 
-class NetworkException implements Exception {}
+

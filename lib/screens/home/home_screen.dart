@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:pda_scanner/pda_source.dart';
 import 'package:tsd/screens/appsettings/appsettings.dart';
+import 'package:tsd/screens/home/cubit/home_cubit.dart';
 import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,6 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.all(16),
           child: ListView(
             children: [
+              SwitchSettingsTile(enabledLabel: "Онлайн", disabledLabel: "Офлайн",
+  leading: Icon(Icons.wifi),
+  settingKey: 'isOnline',
+  title: 'Режим работы',
+  onChange: (value) {
+    changeMode(context);
+  }),
+
               ListTile(
                   title: Text(
                     'appList_acquisition'.tr(),
@@ -74,4 +84,8 @@ clickOnSettings(BuildContext context) {
   Navigator.of(context).push(MaterialPageRoute(
     builder: (context) => AppSettings(),
   ));
+}
+
+changeMode(BuildContext context){
+context.bloc<HomeCubit>().getOfflineData();
 }

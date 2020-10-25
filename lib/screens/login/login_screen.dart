@@ -44,53 +44,54 @@ class _LoginWidgetState extends State<LoginWidget> {
   final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-     return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
-          if (state.status == 'Failure')
-          {
-             final snackBar = SnackBar(
-      backgroundColor: Colors.red, content: Text("Неправильная учетная запись или пароль"));
-            return 
-            Scaffold.of(context).showSnackBar(snackBar);
+          print('state: $state');
+          if (state.status == 'Failure') {
+            final snackBar = SnackBar(
+                backgroundColor: Colors.red,
+                content: Text("Неправильная учетная запись или пароль"));
+            return Scaffold.of(context).showSnackBar(snackBar);
           }
         },
-        child: 
-     SingleChildScrollView(
-      child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 64, vertical: 64),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'login_userName'.tr(),
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              TextFormField(controller: _usernameController),
-              SizedBox(
-                height: 24,
-              ),
-              Text('login_userPassword'.tr(), style: Theme.of(context).textTheme.headline4),
-              TextFormField(obscureText: true,
-                controller: _passwordController,
-              ),
-              SizedBox(
-                height: 32,
-              ),
-              Container(height: 60,
-                child: RaisedButton(
-                  onPressed: () => loginAction(context),
-                  child: Text("login_signIn".tr()),
-                ),
-              )
-            ],
-          )),
-    ));
-    
+        child: SingleChildScrollView(
+          child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 64, vertical: 64),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'login_userName'.tr(),
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  TextFormField(controller: _usernameController),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Text('login_userPassword'.tr(),
+                      style: Theme.of(context).textTheme.headline4),
+                  TextFormField(
+                    obscureText: true,
+                    controller: _passwordController,
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Container(
+                    height: 60,
+                    child: RaisedButton(
+                      onPressed: () => loginAction(context),
+                      child: Text("login_signIn".tr()),
+                    ),
+                  )
+                ],
+              )),
+        ));
   }
- loginAction(BuildContext context) {
+
+  loginAction(BuildContext context) {
     context.bloc<LoginBloc>().add(
         LoginSubmitted(_usernameController.text, _passwordController.text));
   }
- 
 }

@@ -50,7 +50,8 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
@@ -77,51 +78,48 @@ class _AppViewState extends State<AppView> {
       },
       onGenerateRoute: (_) => SplashPage.route(),
       routes: {
-          '/': (context) => LoginScreen(),
-          '/acquisition': (context) => SsccScreen(),
-          '/home': (context) => HomeScreen(),
-          '/packingList': (context) => PackingListScreen(),
-        },
-         theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            color: Color(0xff445E75),
-            centerTitle: true,
-          ),
-          buttonTheme: ButtonThemeData(
-            textTheme: ButtonTextTheme.primary,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0)),
-            buttonColor: Color(0xff3678AF),
-          ),
-          textTheme: TextTheme(
-              headline4: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontWeight: FontWeight.w300,
-                  color: Color(0xff445E75)),
-                  bodyText1: TextStyle(
-fontSize: 24,
-                  fontFamily: 'Open Sans',
-                  // fontWeight: FontWeight.w300,
-                  color: Color(0xff445E75)),
-
-                  bodyText2: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 16,
-                  // fontWeight: FontWeight.w300,
-                  color: Color(0xff445E75))
-                  ),
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Color(0xff1A76767B),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide.none),
-          ),
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+        '/': (context) => LoginScreen(),
+        '/acquisition': (context) => SsccScreen(),
+        '/home': (context) => HomeScreen(),
+        '/packingList': (context) => PackingListScreen(),
+      },
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: Color(0xff445E75),
+          centerTitle: true,
         ),
-
-        localizationsDelegates: context.localizationDelegates,
+        buttonTheme: ButtonThemeData(
+          textTheme: ButtonTextTheme.primary,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          buttonColor: Color(0xff3678AF),
+        ),
+        textTheme: TextTheme(
+            headline4: TextStyle(
+                fontFamily: 'Open Sans',
+                fontWeight: FontWeight.w300,
+                color: Color(0xff445E75)),
+            bodyText1: TextStyle(
+                fontSize: 24,
+                fontFamily: 'Open Sans',
+                // fontWeight: FontWeight.w300,
+                color: Color(0xff445E75)),
+            bodyText2: TextStyle(
+                fontFamily: 'Open Sans',
+                fontSize: 16,
+                // fontWeight: FontWeight.w300,
+                color: Color(0xff445E75))),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Color(0xff1A76767B),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide.none),
+        ),
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
     );
