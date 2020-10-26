@@ -8,11 +8,12 @@ part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final AppDatabase db;
-  HomeCubit(this.db) : super(HomeInitial());
+  final DataRepository dataRepository;
+  HomeCubit( this.dataRepository, this.db,) : super(HomeInitial());
 
   Future<void> getOfflineData() async {
-    List<Material> materialList = await DataRepository().getMaterials();
-    List<Sscc> ssccList = await DataRepository().getSsccc();
+    List<Material> materialList = await dataRepository.getMaterials();
+    List<Sscc> ssccList = await dataRepository.getSsccc();
     await insertMaterials(materialList, db.materialDao);
     await insertSscc(ssccList, db.ssccDao);
   }

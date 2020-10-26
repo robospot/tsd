@@ -8,7 +8,9 @@ part 'packinglist_state.dart';
 enum CodeType { packList, sscc, ean, dm }
 
 class PackinglistCubit extends Cubit<PackinglistState> {
-  PackinglistCubit() : super(PackinglistInitial());
+  final DataRepository dataRepository;
+
+  PackinglistCubit(this.dataRepository) : super(PackinglistInitial());
   Future<void> scanPack(String scanCode) async {
     if (state is PackinglistLoaded) {
       var currentState = state as PackinglistLoaded;
@@ -33,7 +35,7 @@ class PackinglistCubit extends Cubit<PackinglistState> {
         case CodeType.packList:
           currentState.packListCode = scanCode;
           List<String> plList =
-              await DataRepository().getPackListById(scanCode);
+              await dataRepository.getPackListById(scanCode);
           // print(plList);
           currentState.ssccList = plList;
           break;
@@ -41,11 +43,11 @@ class PackinglistCubit extends Cubit<PackinglistState> {
           currentState.sscc = scanCode;
           if (currentState.ssccList.contains(scanCode)) {
             currentState.ssccList.remove(scanCode);
-            await DataRepository().addPackList(PackList(
+            await dataRepository.addPackList(PackList(
                 sscc: currentState.sscc, packList: currentState.packListCode));
           } else {
             try {
-              await DataRepository().addPackList(PackList(
+              await dataRepository.addPackList(PackList(
                   sscc: currentState.sscc,
                   packList: currentState.packListCode));
               currentState.ssccList.add(scanCode);

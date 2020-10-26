@@ -357,6 +357,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
   final String sscc;
   final String ean;
   final String datamatrix;
+  final bool isUsed;
   final String createdAt;
   final String updatedAt;
   Sscc(
@@ -364,6 +365,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
       this.sscc,
       @required this.ean,
       @required this.datamatrix,
+      @required this.isUsed,
       @required this.createdAt,
       @required this.updatedAt});
   factory Sscc.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -371,6 +373,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
+    final boolType = db.typeSystem.forDartType<bool>();
     return Sscc(
       organization: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}organization']),
@@ -378,6 +381,8 @@ class Sscc extends DataClass implements Insertable<Sscc> {
       ean: stringType.mapFromDatabaseResponse(data['${effectivePrefix}ean']),
       datamatrix: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}datamatrix']),
+      isUsed:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}is_used']),
       createdAt: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}created_at']),
       updatedAt: stringType
@@ -399,6 +404,9 @@ class Sscc extends DataClass implements Insertable<Sscc> {
     if (!nullToAbsent || datamatrix != null) {
       map['datamatrix'] = Variable<String>(datamatrix);
     }
+    if (!nullToAbsent || isUsed != null) {
+      map['is_used'] = Variable<bool>(isUsed);
+    }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<String>(createdAt);
     }
@@ -418,6 +426,8 @@ class Sscc extends DataClass implements Insertable<Sscc> {
       datamatrix: datamatrix == null && nullToAbsent
           ? const Value.absent()
           : Value(datamatrix),
+      isUsed:
+          isUsed == null && nullToAbsent ? const Value.absent() : Value(isUsed),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -435,6 +445,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
       sscc: serializer.fromJson<String>(json['sscc']),
       ean: serializer.fromJson<String>(json['ean']),
       datamatrix: serializer.fromJson<String>(json['datamatrix']),
+      isUsed: serializer.fromJson<bool>(json['isUsed']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
@@ -447,6 +458,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
       'sscc': serializer.toJson<String>(sscc),
       'ean': serializer.toJson<String>(ean),
       'datamatrix': serializer.toJson<String>(datamatrix),
+      'isUsed': serializer.toJson<bool>(isUsed),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
     };
@@ -457,6 +469,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
           String sscc,
           String ean,
           String datamatrix,
+          bool isUsed,
           String createdAt,
           String updatedAt}) =>
       Sscc(
@@ -464,6 +477,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
         sscc: sscc ?? this.sscc,
         ean: ean ?? this.ean,
         datamatrix: datamatrix ?? this.datamatrix,
+        isUsed: isUsed ?? this.isUsed,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -474,6 +488,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
           ..write('sscc: $sscc, ')
           ..write('ean: $ean, ')
           ..write('datamatrix: $datamatrix, ')
+          ..write('isUsed: $isUsed, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -487,8 +502,10 @@ class Sscc extends DataClass implements Insertable<Sscc> {
           sscc.hashCode,
           $mrjc(
               ean.hashCode,
-              $mrjc(datamatrix.hashCode,
-                  $mrjc(createdAt.hashCode, updatedAt.hashCode))))));
+              $mrjc(
+                  datamatrix.hashCode,
+                  $mrjc(isUsed.hashCode,
+                      $mrjc(createdAt.hashCode, updatedAt.hashCode)))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -497,6 +514,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
           other.sscc == this.sscc &&
           other.ean == this.ean &&
           other.datamatrix == this.datamatrix &&
+          other.isUsed == this.isUsed &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -506,6 +524,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
   final Value<String> sscc;
   final Value<String> ean;
   final Value<String> datamatrix;
+  final Value<bool> isUsed;
   final Value<String> createdAt;
   final Value<String> updatedAt;
   const SsccsCompanion({
@@ -513,6 +532,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
     this.sscc = const Value.absent(),
     this.ean = const Value.absent(),
     this.datamatrix = const Value.absent(),
+    this.isUsed = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -521,10 +541,12 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
     this.sscc = const Value.absent(),
     @required String ean,
     @required String datamatrix,
+    @required bool isUsed,
     @required String createdAt,
     @required String updatedAt,
   })  : ean = Value(ean),
         datamatrix = Value(datamatrix),
+        isUsed = Value(isUsed),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<Sscc> custom({
@@ -532,6 +554,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
     Expression<String> sscc,
     Expression<String> ean,
     Expression<String> datamatrix,
+    Expression<bool> isUsed,
     Expression<String> createdAt,
     Expression<String> updatedAt,
   }) {
@@ -540,6 +563,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
       if (sscc != null) 'sscc': sscc,
       if (ean != null) 'ean': ean,
       if (datamatrix != null) 'datamatrix': datamatrix,
+      if (isUsed != null) 'is_used': isUsed,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -550,6 +574,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
       Value<String> sscc,
       Value<String> ean,
       Value<String> datamatrix,
+      Value<bool> isUsed,
       Value<String> createdAt,
       Value<String> updatedAt}) {
     return SsccsCompanion(
@@ -557,6 +582,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
       sscc: sscc ?? this.sscc,
       ean: ean ?? this.ean,
       datamatrix: datamatrix ?? this.datamatrix,
+      isUsed: isUsed ?? this.isUsed,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -577,6 +603,9 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
     if (datamatrix.present) {
       map['datamatrix'] = Variable<String>(datamatrix.value);
     }
+    if (isUsed.present) {
+      map['is_used'] = Variable<bool>(isUsed.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(createdAt.value);
     }
@@ -593,6 +622,7 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
           ..write('sscc: $sscc, ')
           ..write('ean: $ean, ')
           ..write('datamatrix: $datamatrix, ')
+          ..write('isUsed: $isUsed, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -654,6 +684,18 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
     );
   }
 
+  final VerificationMeta _isUsedMeta = const VerificationMeta('isUsed');
+  GeneratedBoolColumn _isUsed;
+  @override
+  GeneratedBoolColumn get isUsed => _isUsed ??= _constructIsUsed();
+  GeneratedBoolColumn _constructIsUsed() {
+    return GeneratedBoolColumn(
+      'is_used',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
   GeneratedTextColumn _createdAt;
   @override
@@ -680,7 +722,7 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [organization, sscc, ean, datamatrix, createdAt, updatedAt];
+      [organization, sscc, ean, datamatrix, isUsed, createdAt, updatedAt];
   @override
   $SsccsTable get asDslTable => this;
   @override
@@ -715,6 +757,12 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
               data['datamatrix'], _datamatrixMeta));
     } else if (isInserting) {
       context.missing(_datamatrixMeta);
+    }
+    if (data.containsKey('is_used')) {
+      context.handle(_isUsedMeta,
+          isUsed.isAcceptableOrUnknown(data['is_used'], _isUsedMeta));
+    } else if (isInserting) {
+      context.missing(_isUsedMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,

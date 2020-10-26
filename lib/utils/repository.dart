@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
+import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tsd/models/packList.dart';
 import 'package:tsd/models/sscc.dart' as sModel;
 import 'package:tsd/models/ssccModel.dart';
@@ -12,41 +13,48 @@ import 'constants.dart';
 import 'moor/moor_database.dart';
 
 class DataRepository {
+  final AppDatabase db;
+  DataRepository(this.db);
   var oauth = OAuth(
       clientId: "com.tsd", tokenUrl: '${ConfigStorage.baseUrl}auth/token');
   var request = Dio();
 
-  Future<SsccModel> addSscc(sModel.Sscc sscc) async {
+  Future<SsccModel> addSscc(sModel.Sscc sscc, bool isOnline) async {
     print('${sscc.toJson()}');
-    request.interceptors.add(BearerInterceptor(oauth));
-    try {
-      var response =
-          await request.put('${ConfigStorage.baseUrl}dm', data: sscc.toJson());
-      print('response: $response');
-      return SsccModel.fromJson(response.toString());
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.RESPONSE) {
-        print('error description:');
-        print(e.response);
-        throw e.response;
+    // Если приложение онлайн, то делаем запрос к серверу
+    if (isOnline) {
+      request.interceptors.add(BearerInterceptor(oauth));
+      try {
+        var response = await request.put('${ConfigStorage.baseUrl}dm',
+            data: sscc.toJson());
+        print('response: $response');
+        return SsccModel.fromJson(response.toString());
+      } on DioError catch (e) {
+        if (e.type == DioErrorType.RESPONSE) {
+          print('error description:');
+          print(e.response);
+          throw e.response;
+        }
       }
     }
 
-    // var headers = {"Content-Type": "application/json"};
-    // final http.Response response = await http.put('${ConfigStorage.baseUrl}dm',
-    //     body: sscc.toJson(), headers: headers);
-    // if (response.statusCode == 200) {
-    //   print(response.body);
-    //   return SsccModel.fromJson(response.body);
-    //   // return data;
-    // } else {
-    //   // print(response.body);
-    //   // response.print('Network connection error');
-    //   throw Exception(response.body);
-    // }
+    //Иначе отправляем в БД
+    else {
+      final ssccdb = SsccsCompanion(
+          sscc: Value(sscc.sscc),
+          ean: Value(sscc.ean),
+          isUsed: Value(sscc.isUsed),
+          datamatrix: Value(sscc.datamatrix),
+          createdAt: Value(sscc.createdAt),
+          updatedAt: Value(sscc.updatedAt));
+
+      db.ssccDao.insertSscc(ssccdb);
+    }
   }
 
-  Future<SsccModel> getSsccCount(String ssccCode) async {
+  Future<SsccModel> getSsccCount(String ssccCode, bool isOnline) async {
+    // Если приложение онлайн, то делаем запрос к серверу
+    // if (isOnline) {
     request.interceptors.add(BearerInterceptor(oauth));
     try {
       var response =
@@ -59,19 +67,15 @@ class DataRepository {
         throw e.response;
       }
     }
-    // var headers = {"Content-Type": "application/json"};
-    // final http.Response response = await http
-    //     .get('${ConfigStorage.baseUrl}sscc/$ssccCode', headers: headers);
-    // if (response.statusCode == 200) {
-    //   return SsccModel.fromJson(response.body);
-    // } else {
-    //   print('Network connection error');
-    //   NetworkException();
-    //   return null;
+    // }
+//Иначе к БД
+    // else {
+    //   db.ssccDao.getSsccCount();
     // }
   }
 
   Future<SsccModel> getEanCount(String sscc, String eanCode) async {
+       
     request.interceptors.add(BearerInterceptor(oauth));
 
     //Определения языка для EAN
@@ -80,7 +84,7 @@ class DataRepository {
 
     try {
       var response = await request.get('${ConfigStorage.baseUrl}ean',
-          queryParameters: {'sscc': sscc, 'ean' : eanCode, 'lang': lang });
+          queryParameters: {'sscc': sscc, 'ean': eanCode, 'lang': lang});
       return SsccModel.fromJson(response.toString());
     } on DioError catch (e) {
       if (e.type == DioErrorType.RESPONSE) {
@@ -136,14 +140,13 @@ class DataRepository {
     }
   }
 
-    Future<List<Material>> getMaterials() async {
+  Future<List<Material>> getMaterials() async {
     request.interceptors.add(BearerInterceptor(oauth));
     try {
       request.interceptors.add(BearerInterceptor(oauth));
-     Response response = await request.get('${ConfigStorage.baseUrl}ean');
-  var materialList = (response.data as List)
-          .map((e) => Material.fromJson(e))
-          .toList();
+      Response response = await request.get('${ConfigStorage.baseUrl}ean');
+      var materialList =
+          (response.data as List).map((e) => Material.fromJson(e)).toList();
       return materialList;
     } on DioError catch (e) {
       if (e.type == DioErrorType.RESPONSE) {
@@ -152,21 +155,13 @@ class DataRepository {
         throw e.response;
       }
     }
-  
   }
 
   Future<List<Sscc>> getSsccc() async {
     request.interceptors.add(BearerInterceptor(oauth));
     Response response = await request.get('${ConfigStorage.baseUrl}dm');
-    
-     var dmList = (response.data as List)
-          .map((e) => Sscc.fromJson(e))
-          .toList();
-      return dmList;
 
-   
+    var dmList = (response.data as List).map((e) => Sscc.fromJson(e)).toList();
+    return dmList;
   }
-
 }
-
-

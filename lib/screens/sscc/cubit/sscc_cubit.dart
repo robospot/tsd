@@ -1,16 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:tsd/models/sscc.dart' ;
+import 'package:tsd/models/sscc.dart';
 import 'package:tsd/models/ssccModel.dart';
 import 'package:tsd/utils/repository.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 part 'sscc_state.dart';
 
 enum CodeType { sscc, ean, dm, packList }
 
 class SsccCubit extends Cubit<SsccState> {
-  SsccCubit() : super(SsccInitial());
+  final DataRepository dataRepository;
+  SsccCubit(this.dataRepository) : super(SsccInitial());
 
   Future<void> initSscc() async {
     String ssccValue = '';
@@ -39,6 +41,7 @@ class SsccCubit extends Cubit<SsccState> {
     SsccModel ssccModel = SsccModel();
     if (state is SsccLoaded) {
       var currentState = state as SsccLoaded;
+      final isOnline = Settings.getValue<bool>('isOnline', true);
 //Определяем тип отсканированного кода
 
       CodeType codeType;
@@ -69,7 +72,7 @@ class SsccCubit extends Cubit<SsccState> {
           //Очищаем имя EAN
           currentState.eanDescription = 'acquisition_position_name'.tr();
 //Подсчет кол-ва КМ в SSCC
-          ssccModel = await DataRepository().getSsccCount(scanCode);
+          ssccModel = await dataRepository.getSsccCount(scanCode,isOnline);
           currentState.ssccCount = ssccModel.ssccCount;
           currentState.eanCount = 0;
           break;
@@ -83,7 +86,8 @@ class SsccCubit extends Cubit<SsccState> {
             currentState.dmValue = '';
             currentState.eanValue = scanCode;
 //передаем SSCC и EAN чтобы посчитать кол-во позиций
-            ssccModel = await DataRepository().getEanCount(currentState.ssccValue, currentState.eanValue);
+            ssccModel = await dataRepository
+                .getEanCount(currentState.ssccValue, currentState.eanValue);
 
             currentState.eanCount = ssccModel.eanCount;
             currentState.eanDescription =
@@ -100,11 +104,11 @@ class SsccCubit extends Cubit<SsccState> {
               currentState.eanValue != '' &&
               currentState.dmValue != '') {
             try {
-              ssccModel = await DataRepository().addSscc(Sscc(
+              ssccModel = await dataRepository.addSscc(Sscc(
                   sscc: currentState.ssccValue,
                   ean: currentState.eanValue,
                   datamatrix: currentState.dmValue,
-                  isUsed: true));
+                  isUsed: true), isOnline);
               currentState.ssccCount = ssccModel.ssccCount;
               currentState.eanCount = ssccModel.eanCount;
             } catch (e) {
