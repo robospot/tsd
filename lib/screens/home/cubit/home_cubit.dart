@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tsd/utils/moor/moor_database.dart';
 import 'package:tsd/utils/repository.dart';
@@ -9,13 +10,26 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final AppDatabase db;
   final DataRepository dataRepository;
-  HomeCubit( this.dataRepository, this.db,) : super(HomeInitial());
+  HomeCubit(
+    this.dataRepository,
+    this.db,
+  ) : super(HomeInitial());
 
-  Future<void> getOfflineData() async {
-    List<Material> materialList = await dataRepository.getMaterials();
-    List<Sscc> ssccList = await dataRepository.getSsccc();
-    await insertMaterials(materialList, db.materialDao);
-    await insertSscc(ssccList, db.ssccDao);
+  Future<void> getOfflineData(bool isOnline) async {
+    
+    print('Режим работы приложения: $isOnline');
+    if (isOnline) {
+       print('Переходим в Онлайн режим, очищаем локальные данные');
+      removeMaterials(db.materialDao);
+      removeSscc(db.ssccDao);
+     
+    } else {
+      print('Переходим в Офлайн режим, забираем данные с сервера');
+      List<Material> materialList = await dataRepository.getMaterials();
+      List<Sscc> ssccList = await dataRepository.getSsccc();
+      await insertMaterials(materialList, db.materialDao);
+      await insertSscc(ssccList, db.ssccDao);
+    }
   }
 }
 
@@ -31,6 +45,10 @@ Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
   });
 }
 
+Future<void> removeMaterials(MaterialDao db) async {
+  db.deleteMaterials();
+}
+
 Future<void> insertSscc(List<Sscc> ssccList, SsccDao db) async {
   ssccList.forEach((s) {
     final sscc = SsccsCompanion(
@@ -42,4 +60,8 @@ Future<void> insertSscc(List<Sscc> ssccList, SsccDao db) async {
 
     db.insertSscc(sscc);
   });
+}
+
+Future<void> removeSscc(SsccDao db) async {
+  db.deleteSsccs();
 }

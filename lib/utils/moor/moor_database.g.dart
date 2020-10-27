@@ -152,13 +152,12 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
     this.updatedAt = const Value.absent(),
   });
   MaterialsCompanion.insert({
-    @required int id,
+    this.id = const Value.absent(),
     @required String ean,
     @required String language,
     @required String createdAt,
     @required String updatedAt,
-  })  : id = Value(id),
-        ean = Value(ean),
+  })  : ean = Value(ean),
         language = Value(language),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
@@ -308,8 +307,6 @@ class $MaterialsTable extends Materials
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('ean')) {
       context.handle(
@@ -339,7 +336,7 @@ class $MaterialsTable extends Materials
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Material map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -541,12 +538,11 @@ class SsccsCompanion extends UpdateCompanion<Sscc> {
     this.sscc = const Value.absent(),
     @required String ean,
     @required String datamatrix,
-    @required bool isUsed,
+    this.isUsed = const Value.absent(),
     @required String createdAt,
     @required String updatedAt,
   })  : ean = Value(ean),
         datamatrix = Value(datamatrix),
-        isUsed = Value(isUsed),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<Sscc> custom({
@@ -689,11 +685,8 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
   @override
   GeneratedBoolColumn get isUsed => _isUsed ??= _constructIsUsed();
   GeneratedBoolColumn _constructIsUsed() {
-    return GeneratedBoolColumn(
-      'is_used',
-      $tableName,
-      false,
-    );
+    return GeneratedBoolColumn('is_used', $tableName, false,
+        defaultValue: Constant(false));
   }
 
   final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
@@ -761,8 +754,6 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
     if (data.containsKey('is_used')) {
       context.handle(_isUsedMeta,
           isUsed.isAcceptableOrUnknown(data['is_used'], _isUsedMeta));
-    } else if (isInserting) {
-      context.missing(_isUsedMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -780,7 +771,7 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {datamatrix};
   @override
   Sscc map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

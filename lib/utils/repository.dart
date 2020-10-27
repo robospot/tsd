@@ -45,10 +45,15 @@ class DataRepository {
           ean: Value(sscc.ean),
           isUsed: Value(sscc.isUsed),
           datamatrix: Value(sscc.datamatrix),
-          createdAt: Value(sscc.createdAt),
-          updatedAt: Value(sscc.updatedAt));
+          createdAt: Value(DateTime.now().toString()),
+          updatedAt: Value(DateTime.now().toString()));
 
       db.ssccDao.insertSscc(ssccdb);
+
+      // Делаем подсчет SSCC
+      int ssccCount = await db.ssccDao.getSsccCount(sscc);
+      int eanCount = await db.ssccDao.getSsccCount(sscc);
+      return SsccModel(eanDescription: "тест", ssccCount: ssccCount, eanCount: eanCount);
     }
   }
 
@@ -69,13 +74,10 @@ class DataRepository {
     }
     // }
 //Иначе к БД
-    // else {
-    //   db.ssccDao.getSsccCount();
-    // }
+ 
   }
 
   Future<SsccModel> getEanCount(String sscc, String eanCode) async {
-       
     request.interceptors.add(BearerInterceptor(oauth));
 
     //Определения языка для EAN

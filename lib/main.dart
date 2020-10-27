@@ -6,6 +6,7 @@ import 'package:tsd/screens/home/cubit/home_cubit.dart';
 import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'app.dart';
+import 'screens/login/bloc/login_bloc.dart';
 import 'utils/authentication/authentication_repository.dart';
 import 'utils/authentication/user_repository.dart';
 import 'utils/moor/moor_database.dart';
@@ -27,9 +28,18 @@ void main() {
           BlocProvider<SsccCubit>(
               create: (BuildContext context) => SsccCubit(dataRepository)),
           BlocProvider<PackinglistCubit>(
-              create: (BuildContext context) => PackinglistCubit(dataRepository)),
+              create: (BuildContext context) =>
+                  PackinglistCubit(dataRepository)),
           BlocProvider<HomeCubit>(
               create: (BuildContext context) => HomeCubit(dataRepository, db)),
+          BlocProvider(
+            create: (context) {
+              return LoginBloc(
+                authenticationRepository:
+                    AuthenticationRepository(),
+              );
+            },
+          ),
         ],
         child: App(
           authenticationRepository: AuthenticationRepository(),

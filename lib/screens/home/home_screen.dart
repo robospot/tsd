@@ -50,12 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.all(16),
           child: ListView(
             children: [
-              SwitchSettingsTile(enabledLabel: "Онлайн", disabledLabel: "Офлайн",
+              SwitchSettingsTile(enabledLabel: "Онлайн", disabledLabel: "Офлайн",defaultValue: true,
   leading: Icon(Icons.wifi),
   settingKey: 'isOnline',
   title: 'Режим работы',
   onChange: (value) {
-    changeMode(context);
+    changeMode(value, context);
   }),
 
               ListTile(
@@ -86,6 +86,6 @@ clickOnSettings(BuildContext context) {
   ));
 }
 
-changeMode(BuildContext context){
-context.bloc<HomeCubit>().getOfflineData();
+changeMode(bool value, BuildContext context){
+context.bloc<HomeCubit>().getOfflineData(value);
 }
