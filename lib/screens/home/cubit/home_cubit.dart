@@ -40,6 +40,7 @@ Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
         language: Value(m.language),
         createdAt: Value(m.createdAt),
         updatedAt: Value(m.updatedAt),
+        
         id: Value(m.id));
     db.insertMaterial(mat);
   });
@@ -54,6 +55,7 @@ Future<void> insertSscc(List<Sscc> ssccList, SsccDao db) async {
     final sscc = SsccsCompanion(
         sscc: Value(s.sscc),
         ean: Value(s.ean),
+        isUsed: Value(s.isUsed),
         datamatrix: Value(s.datamatrix),
         createdAt: Value(s.createdAt),
         updatedAt: Value(s.updatedAt));

@@ -19,7 +19,7 @@ class Ssccs extends Table {
   TextColumn get sscc => text().nullable()();
   TextColumn get ean => text()();
   TextColumn get datamatrix => text()();
-  BoolColumn get isUsed => boolean().withDefault(Constant(false))();
+  BoolColumn get isUsed => boolean().nullable()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
 

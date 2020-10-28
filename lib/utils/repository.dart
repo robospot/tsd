@@ -59,7 +59,7 @@ class DataRepository {
 
   Future<SsccModel> getSsccCount(String ssccCode, bool isOnline) async {
     // Если приложение онлайн, то делаем запрос к серверу
-    // if (isOnline) {
+    if (isOnline) {
     request.interceptors.add(BearerInterceptor(oauth));
     try {
       var response =
@@ -72,9 +72,12 @@ class DataRepository {
         throw e.response;
       }
     }
-    // }
+    }
 //Иначе к БД
- 
+ else {
+   
+ }
+
   }
 
   Future<SsccModel> getEanCount(String sscc, String eanCode) async {

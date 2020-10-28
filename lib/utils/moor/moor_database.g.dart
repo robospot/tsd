@@ -362,7 +362,7 @@ class Sscc extends DataClass implements Insertable<Sscc> {
       this.sscc,
       @required this.ean,
       @required this.datamatrix,
-      @required this.isUsed,
+      this.isUsed,
       @required this.createdAt,
       @required this.updatedAt});
   factory Sscc.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -685,8 +685,11 @@ class $SsccsTable extends Ssccs with TableInfo<$SsccsTable, Sscc> {
   @override
   GeneratedBoolColumn get isUsed => _isUsed ??= _constructIsUsed();
   GeneratedBoolColumn _constructIsUsed() {
-    return GeneratedBoolColumn('is_used', $tableName, false,
-        defaultValue: Constant(false));
+    return GeneratedBoolColumn(
+      'is_used',
+      $tableName,
+      true,
+    );
   }
 
   final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
