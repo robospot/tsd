@@ -11,12 +11,14 @@ class Material extends DataClass implements Insertable<Material> {
   final int id;
   final String ean;
   final String language;
+  final String description;
   final String createdAt;
   final String updatedAt;
   Material(
       {@required this.id,
       @required this.ean,
       @required this.language,
+      @required this.description,
       @required this.createdAt,
       @required this.updatedAt});
   factory Material.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -29,6 +31,8 @@ class Material extends DataClass implements Insertable<Material> {
       ean: stringType.mapFromDatabaseResponse(data['${effectivePrefix}ean']),
       language: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}language']),
+      description: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}description']),
       createdAt: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}created_at']),
       updatedAt: stringType
@@ -47,6 +51,9 @@ class Material extends DataClass implements Insertable<Material> {
     if (!nullToAbsent || language != null) {
       map['language'] = Variable<String>(language);
     }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<String>(createdAt);
     }
@@ -63,6 +70,9 @@ class Material extends DataClass implements Insertable<Material> {
       language: language == null && nullToAbsent
           ? const Value.absent()
           : Value(language),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -79,6 +89,7 @@ class Material extends DataClass implements Insertable<Material> {
       id: serializer.fromJson<int>(json['id']),
       ean: serializer.fromJson<String>(json['ean']),
       language: serializer.fromJson<String>(json['language']),
+      description: serializer.fromJson<String>(json['description']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
@@ -90,6 +101,7 @@ class Material extends DataClass implements Insertable<Material> {
       'id': serializer.toJson<int>(id),
       'ean': serializer.toJson<String>(ean),
       'language': serializer.toJson<String>(language),
+      'description': serializer.toJson<String>(description),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
     };
@@ -99,12 +111,14 @@ class Material extends DataClass implements Insertable<Material> {
           {int id,
           String ean,
           String language,
+          String description,
           String createdAt,
           String updatedAt}) =>
       Material(
         id: id ?? this.id,
         ean: ean ?? this.ean,
         language: language ?? this.language,
+        description: description ?? this.description,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -114,6 +128,7 @@ class Material extends DataClass implements Insertable<Material> {
           ..write('id: $id, ')
           ..write('ean: $ean, ')
           ..write('language: $language, ')
+          ..write('description: $description, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -125,8 +140,10 @@ class Material extends DataClass implements Insertable<Material> {
       id.hashCode,
       $mrjc(
           ean.hashCode,
-          $mrjc(language.hashCode,
-              $mrjc(createdAt.hashCode, updatedAt.hashCode)))));
+          $mrjc(
+              language.hashCode,
+              $mrjc(description.hashCode,
+                  $mrjc(createdAt.hashCode, updatedAt.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -134,6 +151,7 @@ class Material extends DataClass implements Insertable<Material> {
           other.id == this.id &&
           other.ean == this.ean &&
           other.language == this.language &&
+          other.description == this.description &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -142,12 +160,14 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
   final Value<int> id;
   final Value<String> ean;
   final Value<String> language;
+  final Value<String> description;
   final Value<String> createdAt;
   final Value<String> updatedAt;
   const MaterialsCompanion({
     this.id = const Value.absent(),
     this.ean = const Value.absent(),
     this.language = const Value.absent(),
+    this.description = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -155,16 +175,19 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
     this.id = const Value.absent(),
     @required String ean,
     @required String language,
+    @required String description,
     @required String createdAt,
     @required String updatedAt,
   })  : ean = Value(ean),
         language = Value(language),
+        description = Value(description),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<Material> custom({
     Expression<int> id,
     Expression<String> ean,
     Expression<String> language,
+    Expression<String> description,
     Expression<String> createdAt,
     Expression<String> updatedAt,
   }) {
@@ -172,6 +195,7 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
       if (id != null) 'id': id,
       if (ean != null) 'ean': ean,
       if (language != null) 'language': language,
+      if (description != null) 'description': description,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -181,12 +205,14 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
       {Value<int> id,
       Value<String> ean,
       Value<String> language,
+      Value<String> description,
       Value<String> createdAt,
       Value<String> updatedAt}) {
     return MaterialsCompanion(
       id: id ?? this.id,
       ean: ean ?? this.ean,
       language: language ?? this.language,
+      description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -204,6 +230,9 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
     if (language.present) {
       map['language'] = Variable<String>(language.value);
     }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(createdAt.value);
     }
@@ -219,6 +248,7 @@ class MaterialsCompanion extends UpdateCompanion<Material> {
           ..write('id: $id, ')
           ..write('ean: $ean, ')
           ..write('language: $language, ')
+          ..write('description: $description, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -267,6 +297,20 @@ class $MaterialsTable extends Materials
     );
   }
 
+  final VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  GeneratedTextColumn _description;
+  @override
+  GeneratedTextColumn get description =>
+      _description ??= _constructDescription();
+  GeneratedTextColumn _constructDescription() {
+    return GeneratedTextColumn(
+      'description',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
   GeneratedTextColumn _createdAt;
   @override
@@ -293,7 +337,7 @@ class $MaterialsTable extends Materials
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, ean, language, createdAt, updatedAt];
+      [id, ean, language, description, createdAt, updatedAt];
   @override
   $MaterialsTable get asDslTable => this;
   @override
@@ -319,6 +363,14 @@ class $MaterialsTable extends Materials
           language.isAcceptableOrUnknown(data['language'], _languageMeta));
     } else if (isInserting) {
       context.missing(_languageMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description'], _descriptionMeta));
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,

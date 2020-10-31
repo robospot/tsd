@@ -1,12 +1,14 @@
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tsd/models/sscc.dart' as sModel;
 
+
 part 'moor_database.g.dart';
 
 class Materials extends Table {
   IntColumn get id => integer()();
   TextColumn get ean => text()();
   TextColumn get language => text()();
+  TextColumn get description => text()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
 
@@ -34,7 +36,7 @@ class AppDatabase extends _$AppDatabase {
             path: 'db.sqlite', logStatements: true));
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 1;
 }
 
 @UseDao(tables: [Materials])
@@ -46,6 +48,12 @@ class MaterialDao extends DatabaseAccessor<AppDatabase>
 
   Future insertMaterial(Insertable<Material> m) => into(materials).insert(m);
   Future deleteMaterials() => delete(materials).go();
+  Future <Material> getMaterialName(sModel.Sscc sscc, String lang) {
+    return (select(materials)
+          ..where((m) => m.ean.equals(sscc.ean) & m.language.equals(lang))
+          // ..where((l) => l.language.equals(lang)))
+    ).getSingle();
+  }
 }
 
 @UseDao(tables: [Ssccs])
@@ -62,9 +70,11 @@ class SsccDao extends DatabaseAccessor<AppDatabase> with _$SsccDaoMixin {
     final query = selectOnly(ssccs)
       ..addColumns([ssccCount])
       ..where(ssccs.sscc.equals(sscc.sscc))
+      ..where(ssccs.isUsed.equals(true))
       ..groupBy([ssccs.sscc]);
 
     var result = query.map((row) => row.read(ssccCount)).getSingle();
+
     return result;
   }
 

@@ -10,8 +10,6 @@ class SsccScreen extends StatefulWidget {
 }
 
 class _SsccScreenState extends State<SsccScreen> {
- 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +33,7 @@ class _SsccWidgetState extends State<SsccWidget>
   TextEditingController sscccontroller = TextEditingController();
   TextEditingController eancontroller = TextEditingController();
   TextEditingController dmcontroller = TextEditingController();
-  var _code;
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height - 80;
@@ -179,6 +177,7 @@ class _SsccWidgetState extends State<SsccWidget>
               ),
             ));
       }
+      return null;
     });
   }
 
@@ -189,7 +188,5 @@ class _SsccWidgetState extends State<SsccWidget>
   }
 
   @override
-  void onError(Object error) {
-    
-  }
+  void onError(Object error) {}
 }

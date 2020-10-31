@@ -53,62 +53,75 @@ class DataRepository {
       // Делаем подсчет SSCC
       int ssccCount = await db.ssccDao.getSsccCount(sscc);
       int eanCount = await db.ssccDao.getSsccCount(sscc);
-      return SsccModel(eanDescription: "тест", ssccCount: ssccCount, eanCount: eanCount);
+      return SsccModel(
+          eanDescription: "тест", ssccCount: ssccCount, eanCount: eanCount);
     }
   }
 
   Future<SsccModel> getSsccCount(String ssccCode, bool isOnline) async {
     // Если приложение онлайн, то делаем запрос к серверу
     if (isOnline) {
-    request.interceptors.add(BearerInterceptor(oauth));
-    try {
-      var response =
-          await request.get('${ConfigStorage.baseUrl}sscc/$ssccCode');
-      return SsccModel.fromJson(response.toString());
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.RESPONSE) {
-        print('error description:');
-        print(e.response);
-        throw e.response;
+      request.interceptors.add(BearerInterceptor(oauth));
+      try {
+        var response =
+            await request.get('${ConfigStorage.baseUrl}sscc/$ssccCode');
+        return SsccModel.fromJson(response.toString());
+      } on DioError catch (e) {
+        if (e.type == DioErrorType.RESPONSE) {
+          print('error description:');
+          print(e.response);
+          throw e.response;
+        }
       }
-    }
     }
 //Иначе к БД
- else {
-   
- }
-
+    else {
+      sModel.Sscc sscc = sModel.Sscc(sscc: ssccCode);
+      final int _ssccCount = await db.ssccDao.getSsccCount(sscc) ?? 0;
+      SsccModel ssccModel = SsccModel(ssccCount: _ssccCount);
+      return ssccModel;
+    }
   }
 
-  Future<SsccModel> getEanCount(String sscc, String eanCode) async {
-    request.interceptors.add(BearerInterceptor(oauth));
-
+  Future<SsccModel> getEanCount(
+      String ssccCode, String eanCode, bool isOnline) async {
     //Определения языка для EAN
-    String lang = Settings.getValue<int>('language', 0) == 0 ? 'RU' : 'EN';
-    // request.options.headers['lang'] = lang;
+    String lang =
+        Settings.getValue<String>('language', 'ru') == 'ru' ? 'RU' : 'EN';
 
-    try {
-      var response = await request.get('${ConfigStorage.baseUrl}ean',
-          queryParameters: {'sscc': sscc, 'ean': eanCode, 'lang': lang});
-      return SsccModel.fromJson(response.toString());
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.RESPONSE) {
-        print('error description:');
-        print(e.response);
-        throw e.response;
+    // Если приложение онлайн, то делаем запрос к серверу
+    if (isOnline) {
+      request.interceptors.add(BearerInterceptor(oauth));
+      try {
+        var response = await request.get('${ConfigStorage.baseUrl}ean',
+            queryParameters: {'sscc': ssccCode, 'ean': eanCode, 'lang': lang});
+        return SsccModel.fromJson(response.toString());
+      } on DioError catch (e) {
+        if (e.type == DioErrorType.RESPONSE) {
+          print('error description:');
+          print(e.response);
+          throw e.response;
+        }
       }
     }
-    // var headers = {"Content-Type": "application/json"};
-    // final http.Response response = await http
-    //     .get('${ConfigStorage.baseUrl}ean/$eanCode', headers: headers);
-    // if (response.statusCode == 200) {
-    //   print(response.body);
-    //   return SsccModel.fromJson(response.body);
-    // } else {
-    //   print('Network connection error');
-    //   NetworkException();
-    //   return null;
-    // }
+
+//Иначе к БД
+    else {
+      sModel.Sscc sscc = sModel.Sscc(sscc: ssccCode, ean: eanCode);
+      final int _ssccCount = await db.ssccDao.getSsccCount(sscc) ?? 0;
+      final int _eanCount = await db.ssccDao.getSsccCount(sscc) ?? 0;
+      try {
+        Material _materialName = await db.materialDao.getMaterialName(sscc, lang);
+        print(_materialName);
+        SsccModel ssccModel = SsccModel(
+            ssccCount: _ssccCount,
+            eanCount: _eanCount,
+            eanDescription: _materialName.description);
+        return ssccModel;
+      } catch (e) {
+        print('e: $e');
+      }
+    }
   }
 
   Future<void> addPackList(PackList pl) async {

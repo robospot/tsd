@@ -37,6 +37,7 @@ Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
     final mat = MaterialsCompanion(
         ean: Value(m.ean),
         language: Value(m.language),
+        description: Value(m.description),
         createdAt: Value(m.createdAt),
         updatedAt: Value(m.updatedAt),
         

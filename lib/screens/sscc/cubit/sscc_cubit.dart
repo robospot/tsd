@@ -87,7 +87,7 @@ class SsccCubit extends Cubit<SsccState> {
             currentState.eanValue = scanCode;
 //передаем SSCC и EAN чтобы посчитать кол-во позиций
             ssccModel = await dataRepository
-                .getEanCount(currentState.ssccValue, currentState.eanValue);
+                .getEanCount(currentState.ssccValue, currentState.eanValue, isOnline);
 
             currentState.eanCount = ssccModel.eanCount;
             currentState.eanDescription =
