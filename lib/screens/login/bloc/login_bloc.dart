@@ -1,47 +1,49 @@
-import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:tsd/utils/authentication/authentication_service.dart';
+import 'package:tsd/utils/authentication/bloc/authentication_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:tsd/utils/authentication/authentication_repository.dart';
-
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({
-    @required AuthenticationRepository authenticationRepository,
-  })  : assert(authenticationRepository != null),
-        _authenticationRepository = authenticationRepository,
-        super(const LoginState());
+  final AuthenticationBloc _authenticationBloc;
+  final AuthenticationService _authenticationService;
 
-  final AuthenticationRepository _authenticationRepository;
+  LoginBloc(AuthenticationBloc authenticationBloc,
+      AuthenticationService authenticationService)
+      : assert(authenticationBloc != null),
+        assert(authenticationService != null),
+        _authenticationBloc = authenticationBloc,
+        _authenticationService = authenticationService,
+        super(LoginInitial());
 
   @override
-  Stream<LoginState> mapEventToState(
-    LoginEvent event,
-  ) async* {
-   
+  Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginSubmitted) {
-      yield* _mapLoginSubmittedToState(event, state);
+      yield* _mapLoginWithEmailToState(event);
     }
   }
 
-  
-  Stream<LoginState> _mapLoginSubmittedToState(
-    LoginSubmitted event,
-    LoginState state,
-  ) async* {
-   
-     try {
-        await _authenticationRepository.logIn(
-          username: event.username,
-          password: event.password,
-        );
-        yield state.copyWith(status: 'Success');
-      } on Exception catch (_) {
-        yield state.copyWith(status: 'Failure');
+  Stream<LoginState> _mapLoginWithEmailToState(
+      LoginSubmitted event) async* {
+    yield LoginLoading();
+    try {
+      final user = await _authenticationService.signIn(
+          event.username, event.password);
+      if (user != null) {
+        _authenticationBloc.add(UserLoggedIn(user: user));
+        yield LoginSuccess();
+        yield LoginInitial();
+      } else {
+        yield LoginFailure(error: 'Something very weird just happened');
       }
+    } on Exception catch (e) {
+      yield LoginFailure(error: e.toString());
+    } catch (err) {
+      yield LoginFailure(error: err.message ?? 'An unknown error occured');
     }
- 
+  }
 }

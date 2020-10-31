@@ -7,13 +7,18 @@ abstract class AuthenticationEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AuthenticationStatusChanged extends AuthenticationEvent {
-  const AuthenticationStatusChanged(this.status);
+// Fired just after the app is launched
+class AppLoaded extends AuthenticationEvent {}
 
-  final AuthenticationStatus status;
+// Fired when a user has successfully logged in
+class UserLoggedIn extends AuthenticationEvent {
+  final User user;
+
+  UserLoggedIn({@required this.user});
 
   @override
-  List<Object> get props => [status];
+  List<Object> get props => [user];
 }
 
-class AuthenticationLogoutRequested extends AuthenticationEvent {}
+// Fired when the user has logged out
+class UserLoggedOut extends AuthenticationEvent {}

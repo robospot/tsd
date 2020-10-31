@@ -6,9 +6,8 @@ import 'package:tsd/screens/home/cubit/home_cubit.dart';
 import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'app.dart';
-import 'screens/login/bloc/login_bloc.dart';
-import 'utils/authentication/authentication_repository.dart';
-import 'utils/authentication/user_repository.dart';
+import 'utils/authentication/authentication_service.dart';
+import 'utils/authentication/bloc/authentication_bloc.dart';
 import 'utils/moor/moor_database.dart';
 import 'utils/repository.dart';
 
@@ -23,74 +22,37 @@ void main() {
   final DataRepository dataRepository = DataRepository(db);
 
   runApp(EasyLocalization(
-    child: MultiBlocProvider(
-        providers: [
-          BlocProvider<SsccCubit>(
-              create: (BuildContext context) => SsccCubit(dataRepository)),
-          BlocProvider<PackinglistCubit>(
-              create: (BuildContext context) =>
-                  PackinglistCubit(dataRepository)),
-          BlocProvider<HomeCubit>(
-              create: (BuildContext context) => HomeCubit(dataRepository, db)),
-          BlocProvider(
-            create: (context) {
-              return LoginBloc(
-                authenticationRepository:
-                    AuthenticationRepository(),
-              );
-            },
-          ),
-        ],
-        child: App(
-          authenticationRepository: AuthenticationRepository(),
-          userRepository: UserRepository(),
-        )),
+    child: RepositoryProvider<AuthenticationService>(
+        create: (context) {
+          return UserAuthenticationService();
+        },
+        // Injects the Authentication BLoC
+        child: MultiBlocProvider(
+            providers: [
+              BlocProvider<SsccCubit>(
+                  create: (BuildContext context) => SsccCubit(dataRepository)),
+              BlocProvider<PackinglistCubit>(
+                  create: (BuildContext context) =>
+                      PackinglistCubit(dataRepository)),
+              BlocProvider<HomeCubit>(
+                  create: (BuildContext context) =>
+                      HomeCubit(dataRepository, db)),
+              BlocProvider<AuthenticationBloc>(
+                create: (context) {
+                  final authService =
+                      RepositoryProvider.of<AuthenticationService>(context);
+                  return AuthenticationBloc(authService)..add(AppLoaded());
+                },
+              )
+            ],
+            child: App(
+              
+             
+            ))),
     supportedLocales: [Locale('en', 'US'), Locale('ru', 'RU')],
     path: 'assets/translations',
     fallbackLocale: Locale('en', 'US'),
   ));
 }
 
-// class MyApp extends StatelessWidget {
 
-//   @override
-//   Widget build(BuildContext context) {
-
-//     return MaterialApp(debugShowCheckedModeBanner: false,
-//         title: 'Flutter Demo',
-//         theme: ThemeData(
-//           appBarTheme: AppBarTheme(
-//             color: Color(0xff445E75),
-//             centerTitle: true,
-//           ),
-//           buttonTheme: ButtonThemeData(
-//             textTheme: ButtonTextTheme.primary,
-//             shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(8.0)),
-//             buttonColor: Color(0xff3678AF),
-//           ),
-//           textTheme: TextTheme(
-//               headline4: TextStyle(
-//                   fontFamily: 'Open Sans',
-//                   fontWeight: FontWeight.w300,
-//                   color: Color(0xff445E75))),
-//           inputDecorationTheme: InputDecorationTheme(
-//             filled: true,
-//             fillColor: Color(0xff1A76767B),
-//             border: OutlineInputBorder(
-//                 borderRadius: BorderRadius.circular(10.0),
-//                 borderSide: BorderSide.none),
-//           ),
-//           primarySwatch: Colors.blue,
-//           visualDensity: VisualDensity.adaptivePlatformDensity,
-//         ),
-//         // home: LoginScreen(),
-//         initialRoute: '/',
-//         routes: {
-//           '/': (context) => LoginScreen(),
-//           '/acquisition': (context) => SsccScreen(),
-//           '/home': (context) => HomeScreen(),
-//           '/packingList': (context) => PackingListScreen(),
-//         });
-//   }
-// }

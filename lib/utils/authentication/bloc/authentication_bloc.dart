@@ -1,81 +1,64 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-import 'package:tsd/models/user.dart';
 
-import '../authentication_repository.dart';
-import '../user_repository.dart';
+import '../authentication_service.dart';
+import 'package:meta/meta.dart';
+import 'package:equatable/equatable.dart';
+import 'package:tsd/models/user.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc({
-    @required AuthenticationRepository authenticationRepository,
-    @required UserRepository userRepository,
-  })  : assert(authenticationRepository != null),
-        assert(userRepository != null),
-        _authenticationRepository = authenticationRepository,
-        _userRepository = userRepository,
-        super(const AuthenticationState.unknown()) {
-    _authenticationStatusSubscription = _authenticationRepository.status.listen(
-      (status) => add(AuthenticationStatusChanged(status)),
-    );
-  }
+  final AuthenticationService _authenticationService;
 
-  final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
-  StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
+  AuthenticationBloc(AuthenticationService authenticationService)
+      : assert(authenticationService != null),
+        _authenticationService = authenticationService,
+        super(AuthenticationInitial());
 
   @override
   Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
-  ) async* {
-    if (event is AuthenticationStatusChanged) {
-      yield await _mapAuthenticationStatusChangedToState(event);
-    } else if (event is AuthenticationLogoutRequested) {
-      _authenticationRepository.logOut();
+      AuthenticationEvent event) async* {
+    if (event is AppLoaded) {
+      yield* _mapAppLoadedToState(event);
+    }
+
+    if (event is UserLoggedIn) {
+      yield* _mapUserLoggedInToState(event);
+    }
+
+    if (event is UserLoggedOut) {
+      yield* _mapUserLoggedOutToState(event);
     }
   }
 
-  @override
-  Future<void> close() {
-    _authenticationStatusSubscription?.cancel();
-    _authenticationRepository.dispose();
-    
-    return super.close();
-  }
-
-  Future<AuthenticationState> _mapAuthenticationStatusChangedToState(
-    AuthenticationStatusChanged event,
-  ) async {
-    switch (event.status) {
-      case AuthenticationStatus.unauthenticated:
-        // return const AuthenticationState.unauthenticated();
-         final user = await _tryGetUser();
-        return user != null
-            ? AuthenticationState.authenticated(user)
-            : const AuthenticationState.unauthenticated();
-
-      case AuthenticationStatus.authenticated:
-        final user = await _tryGetUser();
-        return user != null
-            ? AuthenticationState.authenticated(user)
-            : const AuthenticationState.unauthenticated();
-      default:
-        return const AuthenticationState.unknown();
-    }
-  }
-
-  Future<User> _tryGetUser() async {
+  Stream<AuthenticationState> _mapAppLoadedToState(AppLoaded event) async* {
+    yield AuthenticationLoading();
     try {
-      final user = await _userRepository.getUser();
-      return user;
-    } on Exception {
-      return null;
+      final currentUser = await _authenticationService.getCurrentUser();
+
+      if (currentUser != null) {
+        yield AuthenticationAuthenticated(user: currentUser);
+      } else {
+        yield AuthenticationNotAuthenticated();
+      }
+    } catch (e) {
+      yield AuthenticationFailure(
+          message: e.message ?? 'An unknown error occurred');
     }
+  }
+
+  Stream<AuthenticationState> _mapUserLoggedInToState(
+      UserLoggedIn event) async* {
+    yield AuthenticationAuthenticated(user: event.user);
+  }
+
+  Stream<AuthenticationState> _mapUserLoggedOutToState(
+      UserLoggedOut event) async* {
+    await _authenticationService.signOut();
+    yield AuthenticationNotAuthenticated();
   }
 }
+
+

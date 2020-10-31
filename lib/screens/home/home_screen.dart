@@ -6,8 +6,9 @@ import 'package:tsd/screens/home/cubit/home_cubit.dart';
 import 'package:tsd/screens/packingList/cubit/packinglist_cubit.dart';
 import 'package:tsd/screens/sscc/cubit/sscc_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tsd/utils/authentication/bloc/authentication_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:tsd/utils/authentication/bloc/authentication_bloc.dart';
+
 
 class HomeScreen extends StatefulWidget {
   static Route route() {
@@ -42,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.exit_to_app),
             onPressed: () => context
                 .bloc<AuthenticationBloc>()
-                .add(AuthenticationLogoutRequested()),
+                .add(UserLoggedOut()
+            ),
           ),
         ],
       ),
@@ -50,14 +52,16 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.all(16),
           child: ListView(
             children: [
-              SwitchSettingsTile(enabledLabel: "Онлайн", disabledLabel: "Офлайн",defaultValue: true,
-  leading: Icon(Icons.wifi),
-  settingKey: 'isOnline',
-  title: 'Режим работы',
-  onChange: (value) {
-    changeMode(value, context);
-  }),
-
+              SwitchSettingsTile(
+                  enabledLabel: "Онлайн",
+                  disabledLabel: "Офлайн",
+                  defaultValue: true,
+                  leading: Icon(Icons.wifi),
+                  settingKey: 'isOnline',
+                  title: 'Режим работы',
+                  onChange: (value) {
+                    changeMode(value, context);
+                  }),
               ListTile(
                   title: Text(
                     'appList_acquisition'.tr(),
@@ -86,6 +90,6 @@ clickOnSettings(BuildContext context) {
   ));
 }
 
-changeMode(bool value, BuildContext context){
-context.bloc<HomeCubit>().getOfflineData(value);
+changeMode(bool value, BuildContext context) {
+  context.bloc<HomeCubit>().getOfflineData(value);
 }

@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tsd/utils/moor/moor_database.dart';
 import 'package:tsd/utils/repository.dart';

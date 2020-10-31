@@ -1,40 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tsd/screens/login/login_page.dart';
 import 'screens/home/home_screen.dart';
-import 'screens/login/login_page.dart';
-import 'screens/login/login_screen.dart';
 import 'screens/packingList/packingList_screen.dart';
-import 'screens/splash/view/splash_page.dart';
 import 'screens/sscc/sscc_screen.dart';
-import 'utils/authentication/authentication_repository.dart';
 import 'utils/authentication/bloc/authentication_bloc.dart';
-import 'utils/authentication/user_repository.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class App extends StatelessWidget {
   const App({
     Key key,
-    @required this.authenticationRepository,
-    @required this.userRepository,
-  })  : assert(authenticationRepository != null),
-        assert(userRepository != null),
-        super(key: key);
-
-  final AuthenticationRepository authenticationRepository;
-  final UserRepository userRepository;
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
-      child: BlocProvider(
-        create: (_) => AuthenticationBloc(
-          authenticationRepository: authenticationRepository,
-          userRepository: userRepository,
-        ),
-        child: AppView(),
-      ),
-    );
+    return AppView();
   }
 }
 
@@ -44,41 +24,25 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState;
+  // final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      navigatorKey: _navigatorKey,
-      builder: (context, child) {
-        return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  HomeScreen.route(),
-                  (route) => false,
-                );
-                break;
-              case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
-                  (route) => false,
-                );
-                break;
-              default:
-                break;
-            }
-          },
-          child: child,
-        );
-      },
-      onGenerateRoute: (_) => SplashPage.route(),
+      // navigatorKey: _navigatorKey,
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is AuthenticationAuthenticated) {
+            // show home page
+            return HomeScreen();
+          }
+          // otherwise show login page
+          return LoginPage();
+        },
+      ),
+
       routes: {
-        '/': (context) => LoginScreen(),
         '/acquisition': (context) => SsccScreen(),
         '/home': (context) => HomeScreen(),
         '/packingList': (context) => PackingListScreen(),

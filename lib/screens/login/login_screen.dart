@@ -3,6 +3,8 @@ import 'package:tsd/screens/appsettings/appsettings.dart';
 import 'package:tsd/screens/login/bloc/login_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:tsd/utils/authentication/authentication_service.dart';
+import 'package:tsd/utils/authentication/bloc/authentication_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,17 +14,21 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    final authService = RepositoryProvider.of<AuthenticationService>(context);
+    final authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('appBar_Authorization'.tr()),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () => clickOnSettings(context))
-        ],
-      ),
-      body: LoginWidget(),
-    );
+        appBar: AppBar(
+          title: Text('appBar_Authorization'.tr()),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () => clickOnSettings(context))
+          ],
+        ),
+        body: BlocProvider<LoginBloc>(
+          create: (context) => LoginBloc(authBloc, authService),
+          child: LoginWidget(),
+        ));
   }
 }
 
@@ -47,7 +53,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     return BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           print('state: $state');
-          if (state.status == 'Failure') {
+          if (state is LoginFailure) {
             final snackBar = SnackBar(
                 backgroundColor: Colors.red,
                 content: Text("Неправильная учетная запись или пароль"));
@@ -59,7 +65,6 @@ class _LoginWidgetState extends State<LoginWidget> {
               margin: EdgeInsets.symmetric(horizontal: 64, vertical: 64),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'login_userName'.tr(),
