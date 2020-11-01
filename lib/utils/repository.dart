@@ -5,9 +5,8 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tsd/models/packList.dart';
-import 'package:tsd/models/sscc.dart' as sModel;
+import 'package:tsd/models/sscc.dart';
 import 'package:tsd/models/ssccModel.dart';
-
 import 'authentication/auth_dio.dart';
 import 'constants.dart';
 import 'moor/moor_database.dart';
@@ -19,7 +18,7 @@ class DataRepository {
       clientId: "com.tsd", tokenUrl: '${ConfigStorage.baseUrl}auth/token');
   var request = Dio();
 
-  Future<SsccModel> addSscc(sModel.Sscc sscc, bool isOnline) async {
+  Future<SsccModel> addSscc(Sscc sscc, bool isOnline) async {
     print('${sscc.toJson()}');
     // Если приложение онлайн, то делаем запрос к серверу
     if (isOnline) {
@@ -40,21 +39,35 @@ class DataRepository {
 
     //Иначе отправляем в БД
     else {
-      final ssccdb = SsccsCompanion(
+      final ssccdb = SsccOutCompanion(
           sscc: Value(sscc.sscc),
           ean: Value(sscc.ean),
           isUsed: Value(sscc.isUsed),
           datamatrix: Value(sscc.datamatrix),
           createdAt: Value(DateTime.now().toString()),
           updatedAt: Value(DateTime.now().toString()));
+      final Sscc ssccIn =
+          Sscc(sscc: sscc.sscc, ean: sscc.ean, datamatrix: sscc.datamatrix);
+      //Блок проверок на коды
+      SsccInData ssccInDb = await db.ssccInDao.getSsccIn(ssccIn);
 
-      db.ssccDao.insertSscc(ssccdb);
+      if (ssccInDb == null)
+        throw 'Datamatrix не найден';
+      else if (ssccInDb.ean != ssccIn.ean)
+        throw 'Datamatrix не соответствует EAN';
+      else {
+        try {
+         await db.ssccOutDao.insertSscc(ssccdb);
+        } catch (e) {
+          throw 'Datamatrix уже был использован';
+        }
 
-      // Делаем подсчет SSCC
-      int ssccCount = await db.ssccDao.getSsccCount(sscc);
-      int eanCount = await db.ssccDao.getSsccCount(sscc);
-      return SsccModel(
-          eanDescription: "тест", ssccCount: ssccCount, eanCount: eanCount);
+        // Делаем подсчет SSCC и EAN
+        int ssccCount = await db.ssccOutDao.getSsccCount(sscc) ?? 0;
+        int eanCount = await db.ssccOutDao.getSsccCount(sscc) ?? 0;
+        return SsccModel(
+            eanDescription: "", ssccCount: ssccCount, eanCount: eanCount);
+      }
     }
   }
 
@@ -76,8 +89,8 @@ class DataRepository {
     }
 //Иначе к БД
     else {
-      sModel.Sscc sscc = sModel.Sscc(sscc: ssccCode);
-      final int _ssccCount = await db.ssccDao.getSsccCount(sscc) ?? 0;
+      Sscc sscc = Sscc(sscc: ssccCode);
+      final int _ssccCount = await db.ssccOutDao.getSsccCount(sscc) ?? 0;
       SsccModel ssccModel = SsccModel(ssccCount: _ssccCount);
       return ssccModel;
     }
@@ -107,11 +120,12 @@ class DataRepository {
 
 //Иначе к БД
     else {
-      sModel.Sscc sscc = sModel.Sscc(sscc: ssccCode, ean: eanCode);
-      final int _ssccCount = await db.ssccDao.getSsccCount(sscc) ?? 0;
-      final int _eanCount = await db.ssccDao.getSsccCount(sscc) ?? 0;
+      Sscc sscc = Sscc(sscc: ssccCode, ean: eanCode);
+      final int _ssccCount = await db.ssccOutDao.getSsccCount(sscc) ?? 0;
+      final int _eanCount = await db.ssccOutDao.getSsccCount(sscc) ?? 0;
       try {
-        Material _materialName = await db.materialDao.getMaterialName(sscc, lang);
+        Material _materialName =
+            await db.materialDao.getMaterialName(sscc, lang);
         print(_materialName);
         SsccModel ssccModel = SsccModel(
             ssccCount: _ssccCount,
@@ -175,11 +189,12 @@ class DataRepository {
     }
   }
 
-  Future<List<Sscc>> getSsccc() async {
+  Future<List<SsccInData>> getSsccc() async {
     request.interceptors.add(BearerInterceptor(oauth));
     Response response = await request.get('${ConfigStorage.baseUrl}dm');
 
-    var dmList = (response.data as List).map((e) => Sscc.fromJson(e)).toList();
+    var dmList =
+        (response.data as List).map((e) => SsccInData.fromJson(e)).toList();
     return dmList;
   }
 }

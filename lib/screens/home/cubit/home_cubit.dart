@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tsd/models/sscc.dart';
 import 'package:tsd/utils/moor/moor_database.dart';
 import 'package:tsd/utils/repository.dart';
 
@@ -15,19 +16,31 @@ class HomeCubit extends Cubit<HomeState> {
   ) : super(HomeInitial());
 
   Future<void> getOfflineData(bool isOnline) async {
-    
     print('Режим работы приложения: $isOnline');
     if (isOnline) {
-       print('Переходим в Онлайн режим, очищаем локальные данные');
+      print('Переходим в Онлайн режим, очищаем локальные данные');
+
+//--------------------------------------------------------------------
+//Передаем данные на сервер
+//--------------------------------------------------------------------
+      List<SsccOutData> ssccOutList = await db.ssccOutDao.getSsccOutList();
+      ssccOutList.forEach((s) {
+        try {
+          Sscc ssccOut =
+              Sscc(sscc: s.sscc, ean: s.ean, datamatrix: s.datamatrix);
+          dataRepository.addSscc(ssccOut, isOnline);
+        } catch (e) {}
+      });
+
       removeMaterials(db.materialDao);
-      removeSscc(db.ssccDao);
-     
+      removeSsccIn(db.ssccInDao);
+      removeSsccOut(db.ssccOutDao);
     } else {
       print('Переходим в Офлайн режим, забираем данные с сервера');
       List<Material> materialList = await dataRepository.getMaterials();
-      List<Sscc> ssccList = await dataRepository.getSsccc();
+      List<SsccInData> ssccList = await dataRepository.getSsccc();
       await insertMaterials(materialList, db.materialDao);
-      await insertSscc(ssccList, db.ssccDao);
+      await insertSscc(ssccList, db.ssccInDao);
     }
   }
 }
@@ -40,7 +53,6 @@ Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
         description: Value(m.description),
         createdAt: Value(m.createdAt),
         updatedAt: Value(m.updatedAt),
-        
         id: Value(m.id));
     db.insertMaterial(mat);
   });
@@ -50,9 +62,9 @@ Future<void> removeMaterials(MaterialDao db) async {
   db.deleteMaterials();
 }
 
-Future<void> insertSscc(List<Sscc> ssccList, SsccDao db) async {
+Future<void> insertSscc(List<SsccInData> ssccList, SsccInDao db) async {
   ssccList.forEach((s) {
-    final sscc = SsccsCompanion(
+    final sscc = SsccInCompanion(
         sscc: Value(s.sscc),
         ean: Value(s.ean),
         isUsed: Value(s.isUsed),
@@ -64,6 +76,10 @@ Future<void> insertSscc(List<Sscc> ssccList, SsccDao db) async {
   });
 }
 
-Future<void> removeSscc(SsccDao db) async {
-  db.deleteSsccs();
+Future<void> removeSsccIn(SsccInDao db) async {
+  db.deleteSsccIn();
+}
+
+Future<void> removeSsccOut(SsccOutDao db) async {
+  db.deleteSsccOut();
 }
