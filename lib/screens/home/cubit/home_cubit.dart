@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tsd/models/packList.dart';
 import 'package:tsd/models/sscc.dart';
 import 'package:tsd/utils/moor/moor_database.dart';
 import 'package:tsd/utils/repository.dart';
@@ -24,6 +25,8 @@ class HomeCubit extends Cubit<HomeState> {
 //Передаем данные на сервер
 //--------------------------------------------------------------------
       List<SsccOutData> ssccOutList = await db.ssccOutDao.getSsccOutList();
+
+      // Передаем данные по SSCC
       ssccOutList.forEach((s) {
         try {
           Sscc ssccOut =
@@ -32,9 +35,19 @@ class HomeCubit extends Cubit<HomeState> {
         } catch (e) {}
       });
 
+      List<Pack> packs = await db.packsDao.getPackList();
+
+      packs.forEach((p) {
+        try {
+          PackList pl = PackList(packList: p.packCode, sscc: p.sscc);
+          dataRepository.addPackList(pl, isOnline);
+        } catch (e) {}
+      });
+
       removeMaterials(db.materialDao);
       removeSsccIn(db.ssccInDao);
       removeSsccOut(db.ssccOutDao);
+      removePacks(db.packsDao);
     } else {
       print('Переходим в Офлайн режим, забираем данные с сервера');
       List<Material> materialList = await dataRepository.getMaterials();
@@ -58,10 +71,6 @@ Future<void> insertMaterials(List<Material> materials, MaterialDao db) async {
   });
 }
 
-Future<void> removeMaterials(MaterialDao db) async {
-  db.deleteMaterials();
-}
-
 Future<void> insertSscc(List<SsccInData> ssccList, SsccInDao db) async {
   ssccList.forEach((s) {
     final sscc = SsccInCompanion(
@@ -76,10 +85,18 @@ Future<void> insertSscc(List<SsccInData> ssccList, SsccInDao db) async {
   });
 }
 
+Future<void> removeMaterials(MaterialDao db) async {
+  await db.deleteMaterials();
+}
+
 Future<void> removeSsccIn(SsccInDao db) async {
-  db.deleteSsccIn();
+  await db.deleteSsccIn();
 }
 
 Future<void> removeSsccOut(SsccOutDao db) async {
-  db.deleteSsccOut();
+  await db.deleteSsccOut();
+}
+
+Future<void> removePacks(PacksDao db) async {
+  await db.removePacks();
 }

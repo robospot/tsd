@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:meta/meta.dart';
 import 'package:tsd/models/packList.dart';
 import 'package:tsd/utils/repository.dart';
@@ -14,6 +15,7 @@ class PackinglistCubit extends Cubit<PackinglistState> {
   Future<void> scanPack(String scanCode) async {
     if (state is PackinglistLoaded) {
       var currentState = state as PackinglistLoaded;
+      final isOnline = Settings.getValue<bool>('isOnline', true);
 
       CodeType codeType;
       switch (scanCode.length) {
@@ -35,7 +37,7 @@ class PackinglistCubit extends Cubit<PackinglistState> {
         case CodeType.packList:
           currentState.packListCode = scanCode;
           List<String> plList =
-              await dataRepository.getPackListById(scanCode);
+              await dataRepository.getPackListById(scanCode, isOnline);
           // print(plList);
           currentState.ssccList = plList;
           break;
@@ -44,12 +46,12 @@ class PackinglistCubit extends Cubit<PackinglistState> {
           if (currentState.ssccList.contains(scanCode)) {
             currentState.ssccList.remove(scanCode);
             await dataRepository.addPackList(PackList(
-                sscc: currentState.sscc, packList: currentState.packListCode));
+                sscc: currentState.sscc, packList: currentState.packListCode), isOnline);
           } else {
             try {
               await dataRepository.addPackList(PackList(
                   sscc: currentState.sscc,
-                  packList: currentState.packListCode));
+                  packList: currentState.packListCode),isOnline );
               currentState.ssccList.add(scanCode);
             } catch(e) {
               print('error: $e');

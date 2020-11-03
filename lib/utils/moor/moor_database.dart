@@ -1,4 +1,5 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tsd/models/packList.dart';
 import 'package:tsd/models/sscc.dart' as sModel;
 
 part 'moor_database.g.dart';
@@ -133,6 +134,9 @@ class SsccOutDao extends DatabaseAccessor<AppDatabase> with _$SsccOutDaoMixin {
     return result;
   }
 
+  Future<SsccOutData> getSsccOut(String sscc) =>
+      (select(ssccOut)..where((s) => s.sscc.equals(sscc))).getSingle();
+
   Future deleteSsccOut() => delete(ssccOut).go();
 
   Future<List<SsccOutData>> getSsccOutList() => select(ssccOut).get();
@@ -145,11 +149,13 @@ class PacksDao extends DatabaseAccessor<AppDatabase> with _$PacksDaoMixin {
 
   PacksDao(this.db) : super(db);
   Future addPack(Insertable<Pack> pack) => into(packs).insert(pack);
-  // Future addPackList(Insertable<PackListData> s) => into(packListData.insert(s);
-  // Future addPackList(Insertable<PackListData> p) => into(packListData.insert(p);
-  // Future<SsccInData> getSsccIn(sModel.Sscc sscc) =>
-  //     (select(ssccIn)..where((s) => s.datamatrix.equals(sscc.datamatrix)))
-  //         .getSingle();
+  Future<Pack> getPack(PackList pl) => (select(packs)
+        ..where((p) => p.packCode.equals(pl.packList) & p.sscc.equals(pl.sscc)))
+      .getSingle();
+  Future removeSscc(PackList pl) => (delete(packs)
+        ..where((p) => p.packCode.equals(pl.packList) & p.sscc.equals(pl.sscc)))
+      .go();
 
-  // Future deleteSsccIn() => delete(ssccIn).go();
+  Future removePacks() => (delete(packs)).go();
+  Future<List<Pack>> getPackList() => select(packs).get();
 }

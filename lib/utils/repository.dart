@@ -57,7 +57,7 @@ class DataRepository {
         throw 'Datamatrix не соответствует EAN';
       else {
         try {
-         await db.ssccOutDao.insertSscc(ssccdb);
+          await db.ssccOutDao.insertSscc(ssccdb);
         } catch (e) {
           throw 'Datamatrix уже был использован';
         }
@@ -138,26 +138,58 @@ class DataRepository {
     }
   }
 
-  Future<void> addPackList(PackList pl) async {
-    print('request:');
-    print('${pl.toJson()}');
-    var headers = {"Content-Type": "application/json"};
-    final http.Response response = await http.post(
-        '${ConfigStorage.baseUrl}packlist',
-        body: pl.toJson(),
-        headers: headers);
-    if (response.statusCode == 200) {
-      print(response.body);
-      return null;
-      // return data;
-    } else {
-      // print(response.body);
-      // response.print('Network connection error');
-      throw response.body;
+  Future<void> addPackList(PackList pl, bool isOnline) async {
+    if (isOnline) {
+      print('request:');
+      print('${pl.toJson()}');
+      var headers = {"Content-Type": "application/json"};
+      final http.Response response = await http.post(
+          '${ConfigStorage.baseUrl}packlist',
+          body: pl.toJson(),
+          headers: headers);
+      if (response.statusCode == 200) {
+        print(response.body);
+        return null;
+        // return data;
+      } else {
+        // print(response.body);
+        // response.print('Network connection error');
+        throw response.body;
+      }
+    }
+    //БД
+
+    else {
+      //Проверяем на существование SSCC
+      SsccOutData ssccOut = await db.ssccOutDao.getSsccOut(pl.sscc);
+      if (ssccOut == null) {
+        throw 'Запрошенного SSCC кода не существует';
+      } else {
+        //Проверяем был ли такой SSCC в PackList
+        Pack pack = await db.packsDao.getPack(pl);
+
+        // Если нет - добавляем
+        if (pack == null) {
+          db.packsDao.addPack(PacksCompanion(
+              // id: Value(pl.id),
+              packCode: Value(pl.packList),
+              sscc: Value(pl.sscc),
+              createdAt: Value(DateTime.now().toString()),
+              updatedAt: Value(DateTime.now().toString())));
+        }
+        // Иначе удаляем
+        else {
+          await db.packsDao.removeSscc(pl);
+        }
+      }
     }
   }
 
-  Future<List<String>> getPackListById(String packList) async {
+  Future<List<String>> getPackListById(String packList, bool isOnline) async {
+    //  if (isOnline) {
+    //   request.interceptors.add(BearerInterceptor(oauth));
+    //   {
+
     var headers = {"Content-Type": "application/json"};
     final http.Response response = await http
         .get('${ConfigStorage.baseUrl}packlist/$packList', headers: headers);
@@ -170,6 +202,7 @@ class DataRepository {
     } else {
       throw response.body;
     }
+    // }
   }
 
   Future<List<Material>> getMaterials() async {
